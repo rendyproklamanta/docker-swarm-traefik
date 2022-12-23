@@ -1,0 +1,42 @@
+version: "3.7"
+services:
+  traefik:
+    image: traefik:v1.7
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    networks:
+      - traefik-public
+    command:
+      - --api
+      - --docker
+      - --docker.swarmmode
+      - --docker.watch
+      - --entrypoints=Name:http Address::80 Redirect.EntryPoint:https
+      - --entrypoints=Name:https Address::443 TLS
+      - --defaultentrypoints=http,https
+      - --acme
+      - --acme.email=kuba@cometari.com
+      - --acme.storage=/certificates/acme.json
+      - --acme.entryPoint=https
+      - --acme.httpChallenge.entryPoint=http
+      - --acme.onhostrule=true
+      - --acme.acmelogging=true
+      - --logLevel=INFO
+      - --accessLog
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+      mode: replicated
+      replicas: 1
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "traefik-certificates:/certificates"
+
+volumes:
+  traefik-certificates:
+
+networks:
+  traefik-public:
+    driver: overlay

@@ -1,0 +1,14 @@
+version: "3.7"
+services:
+  backend:
+    image: 127.0.0.1:5000/nodejs
+    container_name: 127.0.0.1:5000/nodejs
+    build: .
+    networks:
+      - traefik-public
+    deploy:
+      mode: replicated
+      replicas: 2
+      labels:
+        - traefik.port=3000
+        - traefik.frontend.rule=Host:dockermanager.cic-webpro.com
