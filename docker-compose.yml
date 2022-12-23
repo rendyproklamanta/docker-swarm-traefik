@@ -7,7 +7,7 @@ services:
       - traefik-public
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 2
       labels:
         - traefik.port=3000
         - traefik.frontend.rule=Host:dockermanager.cic-webpro.com
