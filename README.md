@@ -57,3 +57,10 @@ docker stack ls
 docker services ls
 docker service logs <service-name>
 ```
+
+***Add New Swarm Worker***
+
+```
+docker service update registry
+
+```
