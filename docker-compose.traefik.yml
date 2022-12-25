@@ -8,11 +8,8 @@ services:
       - 80:80
       - 443:443
     deploy:
-      placement:
-        constraints:
-          # Make the traefik service run only on the node with this label
-          # as the node with it has the volume for the certificates
-          - node.labels.traefik-public.traefik-public-certificates == true
+      mode: replicated
+      replicas: 3
     volumes:
       # Add Docker as a mounted volume, so that Traefik can read the labels of other services
       - /var/run/docker.sock:/var/run/docker.sock:ro
