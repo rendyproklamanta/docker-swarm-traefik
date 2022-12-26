@@ -24,7 +24,7 @@ services:
       - --providers.docker.exposedbydefault=false
       # Enable Docker Swarm mode
       - --providers.docker.swarmmode
-      - --providers.file.filename=/etc/traefik/configs/traefik-tls.yml
+      - --providers.file.filename=/etc/traefik/traefik-tls.yml
       # Redirect http to https
       - --entrypoints.http.address=:80
       - --entrypoints.http.http.redirections.entryPoint.to=https
@@ -39,7 +39,7 @@ services:
       - --api
     configs:
       - source: traefik-tls.yml
-        target: /etc/traefik/configs/traefik-tls.yml
+        target: /etc/traefik/traefik-tls.yml
     networks:
       # Use the public network created to be shared between Traefik and
       # any other service that needs to be publicly available with HTTPS

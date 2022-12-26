@@ -23,7 +23,7 @@ services:
         - traefik.http.routers.myapp-https.entrypoints=https
         # Adding certificate HTTPS (Lets Encrypt)
         - traefik.http.routers.myapp-https.tls=true
-        - traefik.http.routers.myapp-https.tls.options=default@file
+        - traefik.http.routers.myapp-https.tls.options=intermediate@file
         - traefik.http.routers.myapp-https.tls.certresolver=le
         # change Port of your app (3000 = JS, 9000 = PHP)
         - traefik.http.services.myapp.loadbalancer.server.port=3000
