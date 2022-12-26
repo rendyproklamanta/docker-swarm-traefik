@@ -1,10 +1,13 @@
-version: '3.4'
+version: "3.4"
 
 services:
   myapp:
     image: randyproxz/nodejs
+    restart: unless-stopped
     networks:
       - traefik-public
+    environment:
+      - TZ=Asia/Jakarta
     deploy:
       mode: replicated
       replicas: 3
@@ -12,15 +15,18 @@ services:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.myapp-http.rule=Host(`myapp.domain.com`) 
+        # Host HTTP (80)
+        - traefik.http.routers.myapp-http.rule=Host(`myapp.domain.com`)
         - traefik.http.routers.myapp-http.entrypoints=http
-        - traefik.http.routers.myapp-http.middlewares=https-redirect
-        - traefik.http.routers.myapp-https.rule=Host(`myapp.domain.com`) 
+        # Host HTTPS (443)
+        - traefik.http.routers.myapp-https.rule=Host(`myapp.domain.com`)
         - traefik.http.routers.myapp-https.entrypoints=https
+        # Adding certificate HTTPS (Lets Encrypt)
         - traefik.http.routers.myapp-https.tls=true
+        - traefik.http.routers.myapp-https.tls.options=default@file
         - traefik.http.routers.myapp-https.tls.certresolver=le
+        # change Port of your app (3000 = JS, 9000 = PHP)
         - traefik.http.services.myapp.loadbalancer.server.port=3000
-      restart: unless-stopped
 
 networks:
   traefik-public:

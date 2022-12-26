@@ -1,9 +1,32 @@
+***Requirement***
+
+```
+3 servers = manager (3 is minimum for fault tolerant)
+2 servers = worker (optional, you can use manager only and not use worker)
+```
+
+***Install swarmpit to manage swarm***
+
+```
+git clone https://github.com/swarmpit/swarmpit -b master
+docker stack deploy -c swarmpit/docker-compose.yml swarmpit
+> Open browser http://<IP_ADDRESS>:888
+```
+
+***Assign swarm manager***
+
+```
+> login to Leader manager
+$ docker swarm join-token worker
+> copy text and login to 2 servers for assign as manager
+$ docker swarm join --token <TOKEN> <IP_LEADER>:2377
+```
+
 ***Deploy traefik.yml first***
 
 ```
 docker network create --driver=overlay traefik-public
-export NODE_ID=$(docker info -f '{{.Swarm.NodeID}}')
-docker node update --label-add traefik-public.traefik-public-certificates=true $NODE_ID
+docker config create traefik-tls.yml traefik-tls.yml
 docker stack deploy --compose-file docker-compose.traefik.yml mystack
 ```
 
@@ -24,7 +47,7 @@ docker-compose push
 > Ps. before update service do build and push image
 
 ```
-docker service update --image 127.0.0.1:5000/nodejs <service-name>
+docker service update --image 127.0.0.1:5000/nodejs <service-name> -d
 ```
 
 > Remove old image and container
@@ -61,9 +84,9 @@ docker services ls
 docker service logs <service-name>
 ```
 
-***Add New Swarm Manager***
-> login to Swarm Leader (manager)
+***Promote Worker as new Manager***
+> login to swarm leader (manager)
 ```
-docker node ls <- will show list nodes and copy ID
-docker node promote <NODE_ID>
+docker node ls <- will show list nodes and copy ID worker
+docker node promote <NODE_ID_WORKER>
 ```

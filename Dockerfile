@@ -1,11 +1,17 @@
-FROM node:lts-alpine
-
-RUN apk add --update --no-cache \
-      curl 
-ARG NODE_ENV=production
-ENV NODE_ENV $NODE_ENV
+FROM node:alpine
 
 WORKDIR /usr/src/app
+
+ARG TZ=Asia/Jakarta
+RUN apk --update --no-cache add curl tzdata
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN date
+
+# Set Environment
+ENV NODE_ENV production
+ENV TZ $TZ
+ENV PATH /usr/src/app/node_modules/.bin:$PATH
+
 COPY package*.json ./
 RUN npm install
 COPY . .

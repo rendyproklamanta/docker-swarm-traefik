@@ -1,15 +1,17 @@
-version: '3.3'
+version: "3.3"
 
 services:
-
   traefik:
-    image: traefik:v2.2
+    image: traefik:v2.9
     ports:
       - 80:80
       - 443:443
     deploy:
       mode: replicated
       replicas: 3
+      placement:
+        # Deploy traefik to node manager only!
+        constraints: [node.role == manager]
     volumes:
       # Add Docker as a mounted volume, so that Traefik can read the labels of other services
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -22,7 +24,12 @@ services:
       - --providers.docker.exposedbydefault=false
       # Enable Docker Swarm mode
       - --providers.docker.swarmmode
+      - --providers.file.filename=/etc/traefik/configs/traefik-tls.yml
+      # Redirect http to https
       - --entrypoints.http.address=:80
+      - --entrypoints.http.http.redirections.entryPoint.to=https
+      - --entrypoints.http.http.redirections.entryPoint.scheme=https
+      - --entrypoints.http.http.redirections.entrypoint.permanent=true
       - --entrypoints.https.address=:443
       - --certificatesresolvers.le.acme.email=myemail@domain.com
       - --certificatesresolvers.le.acme.storage=/certificates/acme.json
@@ -30,10 +37,17 @@ services:
       - --accesslog
       - --log
       - --api
+    configs:
+      - source: traefik-tls.yml
+        target: /etc/traefik/configs/traefik-tls.yml
     networks:
       # Use the public network created to be shared between Traefik and
       # any other service that needs to be publicly available with HTTPS
       - traefik-public
+
+configs:
+  traefik-tls.yml:
+    external: true
 
 volumes:
   # Create a volume to store the certificates, there is a constraint to make sure
