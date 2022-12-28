@@ -15,10 +15,13 @@ services:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.constraint-label=traefik-public
-        # Host HTTP (80)
+        # Host HTTP (80 - Non SSL)
         - traefik.http.routers.myapp-http.rule=Host(`myapp.domain.com`)
         - traefik.http.routers.myapp-http.entrypoints=http
-        # Host HTTPS (443)
+        # Host HTTPS (443 - always redirect to https)
+        - traefik.http.middlewares.myapp-redirect.redirectscheme.scheme=https
+        - traefik.http.middlewares.myapp-redirect.redirectscheme.permanent=true
+        - traefik.http.routers.myapp.middlewares=myapp-redirect
         - traefik.http.routers.myapp-https.rule=Host(`myapp.domain.com`)
         - traefik.http.routers.myapp-https.entrypoints=https
         # Adding certificate HTTPS (Lets Encrypt)

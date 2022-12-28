@@ -1,0 +1,100 @@
+version: "3.6"
+services:
+  traefik_init:
+    image: traefik:1.7
+    command:
+      - "storeconfig"
+      - "--loglevel=info"
+      - "--api"
+      - "--entrypoints=Name:http Address::80 Redirect.EntryPoint:https"
+      - "--entrypoints=Name:https Address::443 TLS TLS.SniStrict:true TLS.MinVersion:VersionTLS12"
+      - "--defaultentrypoints=http,https"
+      - "--acme"
+      - "--acme.storage=traefik/acme/account"
+      - "--acme.entryPoint=https"
+      - "--acme.httpChallenge.entryPoint=http"
+      - "--acme.onHostRule=true"
+      - "--acme.onDemand=false"
+      - "--acme.email=acme@mydomain.org"
+      - "--docker"
+      - "--docker.swarmMode"
+      - "--docker.watch"
+      - "--consul"
+      - "--consul.endpoint=consul:8500"
+      - "--consul.prefix=traefik"
+      - "--rest"
+    networks:
+      - default
+      - traefik-public
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - consul
+
+  traefik:
+    image: traefik:1.7
+    depends_on:
+      - traefik_init
+      - consul
+    command:
+      - "--consul"
+      - "--consul.endpoint=consul:8500"
+      - "--consul.prefix=traefik"
+    networks:
+      - default
+      - traefik-public
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - target: 80
+        published: 80
+      - target: 443
+        published: 443
+      - target: 8080
+        published: 8080
+        mode: host 
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      mode: global
+      update_config:
+        parallelism: 1
+        delay: 15s
+      restart_policy:
+        condition: on-failure
+
+  consul:
+    image: consul
+    command: agent -server -bootstrap-expect=3 -ui -client 0.0.0.0 -retry-join tasks.consul
+    volumes:
+      - consul-data:/consul/data
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+      - CONSUL_CLIENT_INTERFACE=eth0
+    ports:
+      - target: 8500
+        published: 8500
+        mode: host
+    deploy:
+      replicas: 3
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+    networks:
+      - default
+      - traefik-public
+  
+networks:
+  traefik-public:
+    external: true
+
+volumes:
+  consul-data:
+      driver: local
