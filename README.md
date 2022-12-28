@@ -15,7 +15,7 @@ NOTE: you need odd servers for fault tolerant and keep your web app running
 > login to server "Leader" manager
 $ git clone https://github.com/swarmpit/swarmpit -b master
 docker stack deploy -c swarmpit/docker-compose.yml swarmpit
-> Open browser http://<IP_ADDRESS>:888
+> Open swarmpit in browser http://<IP_ADDRESS>:888
 ```
 
 ***Assigned node as swarm manager***
@@ -34,6 +34,7 @@ $ docker swarm join --token <TOKEN> <IP_LEADER>:2377
 ```
 docker network create --driver=overlay traefik-public
 docker stack deploy --compose-file traefik/traefik-v1.yml traefik
+> Open consul in browser http://<IP_ADDRESS>:8500
 ```
 
 **traefik-v2**
