@@ -40,7 +40,7 @@ docker stack deploy --compose-file traefik/traefik-v1.yml traefik
 * *in v2 to share certificates to all nodes need traefik enterprise edition (paid)*
 ```
 docker network create --driver=overlay traefik-public
-docker config create traefik-tls.yml traefik-tls.yml
+docker config create traefik-tls.yml traefik/traefik-v2-tls.yml
 docker stack deploy --compose-file traefik/traefik-v2.yml traefik
 ```
 
