@@ -3,6 +3,7 @@ version: "3.4"
 services:
   web:
     image: randyproxz/nodejs
+    restart: unless-stopped
     networks:
       - traefik-public
     environment:

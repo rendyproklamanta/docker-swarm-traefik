@@ -9,22 +9,53 @@ NOTE: you need odd servers for fault tolerant and keep your web app running
 - 5 nodes running = 2 nodes down
 ```
 
-***Install swarmpit to manage swarm***
+***Install docker Almalinux/CentOS***
 
 ```
-> login to server "Leader" manager
-$ git clone https://github.com/swarmpit/swarmpit -b master
-docker stack deploy -c swarmpit/docker-compose.yml swarmpit
-> Open swarmpit in browser http://<IP_ADDRESS>:888
+dnf --refresh update
+dnf upgrade
+dnf install yum-utils
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+dnf install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+systemctl enable docker
+systemctl start docker
+systemctl status docker
 ```
 
-***Assigned node as swarm manager***
+***Install docker Ubuntu***
+
+```
+apt-get remove docker docker-engine docker.io
+apt-get update
+apt install docker.io
+snap install docker
+systemctl status docker
+```
+
+***Init docker swarm in leader node***
+
+```
+docker swarm init --advertise-addr <PRIVATE_IP_ADDRESS>
+```
+
+
+***Assigned another node as swarm manager***
 
 ```
 > login to server "Leader" manager
 $ docker swarm join-token manager
 > copy text and login to 2 servers for assign as manager
 $ docker swarm join --token <TOKEN> <IP_LEADER>:2377
+```
+
+***Install swarmpit to manage swarm***
+
+```
+> login to server "Leader" manager
+$ dnf install git
+$ git clone https://github.com/swarmpit/swarmpit -b master
+docker stack deploy -c swarmpit/docker-compose.yml swarmpit
+> Open swarmpit in browser http://<IP_ADDRESS>:888
 ```
 
 ***Deploy traefik.yml first before deploy your app***
@@ -96,7 +127,7 @@ docker service scale <service-name>=5
 ```
 docker stack ls
 docker services ls
-docker service logs <service-name>
+docker service logs <-f> --tail 10 <SERVICE_NAME>
 ```
 
 ***Promote Worker as new Manager***
@@ -104,4 +135,10 @@ docker service logs <service-name>
 ```
 docker node ls <- will show list nodes and copy ID worker
 docker node promote <NODE_ID_WORKER>
+```
+
+***Other useful commands***
+```
+docker build -t <REPO_NAME> . && docker push <REPO_NAME>
+docker exec $(docker ps -q -f name=myapp_web) curl -f http://localhost:3000 <- bash command
 ```
