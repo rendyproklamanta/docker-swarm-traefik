@@ -9,20 +9,20 @@ NOTE: you need odd servers for fault tolerant and keep your web app running
 - 5 nodes running = 2 nodes down
 ```
 
-***Install docker Almalinux/CentOS***
+***Install docker on Almalinux/CentOS***
 
 ```
-dnf --refresh update
+dnf --refresh update -y
 dnf upgrade
-dnf install yum-utils
+dnf install yum-utils -y
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-dnf install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+dnf install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
 systemctl enable docker
 systemctl start docker
 systemctl status docker
 ```
 
-***Install docker Ubuntu***
+***Install docker on Ubuntu***
 
 ```
 apt-get remove docker docker-engine docker.io
@@ -36,15 +36,14 @@ systemctl status docker
 
 ```
 docker swarm init --advertise-addr <PRIVATE_IP_ADDRESS>
+docker swarm join-token manager
 ```
 
 
 ***Assigned another node as swarm manager***
 
 ```
-> login to server "Leader" manager
-$ docker swarm join-token manager
-> copy text and login to 2 servers for assign as manager
+> copy text from leader node and login to 2 servers for assign as manager
 $ docker swarm join --token <TOKEN> <IP_LEADER>:2377
 ```
 
