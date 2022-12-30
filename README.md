@@ -22,6 +22,19 @@ systemctl start docker
 systemctl status docker
 ```
 
+```
+> Add rules :
+firewall-cmd --permanent --add-port=2376/tcp
+firewall-cmd --permanent --add-port=2377/tcp
+firewall-cmd --permanent --add-port=7946/tcp
+firewall-cmd --permanent --add-port=80/tcp
+firewall-cmd --permanent --add-port=443/tcp
+firewall-cmd --permanent --add-port=888/tcp
+firewall-cmd --permanent --add-port=7946/udp
+firewall-cmd --permanent --add-port=4789/udp
+firewall-cmd --reload
+```
+
 ***Install docker on Ubuntu***
 
 ```
@@ -32,10 +45,24 @@ snap install docker
 systemctl status docker
 ```
 
+```
+> Add rules :
+ufw allow 2376/tcp
+ufw allow 2377/tcp 
+ufw allow 7946/tcp
+ufw allow 80/tcp
+ufw allow 443/tcp
+ufw allow 888/tcp
+ufw allow 4789/udp
+ufw allow 7946/udp
+ufw reload
+ufw enable
+```
+
 ***Init docker swarm in leader node***
 
 ```
-docker swarm init --advertise-addr <PRIVATE_IP_ADDRESS>
+docker swarm init --advertise-addr <PRIVATE_IP or PUBLIC_IP>
 docker swarm join-token manager
 ```
 
@@ -51,11 +78,19 @@ $ docker swarm join --token <TOKEN> <IP_LEADER>:2377
 
 ```
 > login to server "Leader" manager
-$ dnf install git
-$ git clone https://github.com/swarmpit/swarmpit -b master
+dnf install git (CentOS)
+apt install git (Ubuntu)
+git clone https://github.com/swarmpit/swarmpit -b master
 docker stack deploy -c swarmpit/docker-compose.yml swarmpit
 > Open swarmpit in browser http://<IP_ADDRESS>:888
 ```
+
+***Clone this repository***
+```
+git clone https://github.com/rendyproklamanta/docker-swarm-traefik-ssl.git
+```
+
+<hr>
 
 ***Deploy traefik.yml first before deploy your app***
 
@@ -74,6 +109,8 @@ docker network create --driver=overlay traefik-public
 docker config create traefik-tls.yml traefik/traefik-v2-tls.yml
 docker stack deploy --compose-file traefik/traefik-v2.yml traefik
 ```
+
+<hr>
 
 ***Create registry - Run below command one time only if you want to store docker registry in local***
 
