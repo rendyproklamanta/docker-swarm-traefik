@@ -29,8 +29,8 @@ COPY . .
 ### STAGE 2: NGINX ###
 FROM nginx:stable-alpine
 COPY --from=build /var/www/html /usr/share/nginx/html/
-RUN rm /etc/nginx/conf.d/*
-COPY nginx.conf /etc/nginx/conf.d/
+# RUN rm /etc/nginx/conf.d/*
+# COPY nginx.conf /etc/nginx/conf.d/
 
 EXPOSE 9000
 CMD ["nginx", "-g", "daemon off;"]

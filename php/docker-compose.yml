@@ -8,6 +8,10 @@ services:
       - traefik-public
     environment:
       - TZ=Asia/Jakarta
+    configs:
+    - source: nginx.conf
+      target: /etc/nginx/conf.d/nginx.conf
+      mode: 444
     deploy:
       mode: replicated
       replicas: 3
@@ -24,7 +28,11 @@ services:
         - traefik.docker.network=traefik-public
         - traefik.frontend.entryPoints=http,https
         - traefik.frontend.redirect.entryPoint=https
-        
+
+#docker config create nginx.conf nginx.conf
+configs:
+  nginx.conf:
+    external: true
 networks:
   traefik-public:
     external: true
