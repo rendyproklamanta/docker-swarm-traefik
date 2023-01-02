@@ -9,8 +9,9 @@ services:
     environment:
       - TZ=Asia/Jakarta
     deploy:
-      mode: replicated
-      replicas: 3
+      mode: global
+      # mode: replicated
+      # replicas: 3
       labels:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
