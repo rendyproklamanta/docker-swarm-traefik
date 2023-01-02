@@ -1,13 +1,14 @@
-FROM alpine:3.6
+FROM alpine:3.17
 
 RUN apk update && apk upgrade
 RUN apk add bash
 RUN apk add nginx
-RUN apk add php8 php8-fpm php8-opcache
-RUN apk add php8-gd php8-zlib php8-curl
+RUN apk add php81 php81-fpm php81-opcache
+RUN apk add php81-gd php81-zlib php81-curl
 
-COPY nginx /etc/nginx
-COPY php/conf /etc/php8
+COPY nginx/nginx.conf /etc/nginx
+COPY nginx/conf.d/php.conf /etc/nginx/conf.d
+COPY php/conf /etc/php81
 COPY php/public /usr/share/nginx/html
 
 RUN mkdir /var/run/php
@@ -17,4 +18,4 @@ EXPOSE 443
 
 STOPSIGNAL SIGTERM
 
-CMD ["/bin/bash", "-c", "php-fpm8 && chmod 777 /var/run/php/php8-fpm.sock && chmod 755 /usr/share/nginx/html/* && nginx -g 'daemon off;'"]
+CMD ["/bin/bash", "-c", "php-fpm81 && chmod 777 /var/run/php/php81-fpm.sock && chmod 755 /usr/share/nginx/html/* && nginx -g 'daemon off;'"]

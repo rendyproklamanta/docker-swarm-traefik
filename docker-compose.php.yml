@@ -23,7 +23,7 @@ services:
         delay: 40s
       labels:
         - traefik.enable=true
-        - traefik.port=9000
+        - traefik.port=80
         - traefik.frontend.rule=Host:php.domain.com
         - traefik.tags=traefik-public
         - traefik.docker.network=traefik-public
