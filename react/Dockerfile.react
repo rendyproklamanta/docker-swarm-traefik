@@ -8,8 +8,8 @@ RUN yarn build
 # nginx
 FROM nginx:stable-alpine
 COPY --from=build /app/build /usr/share/nginx/html
-COPY --from=build nginx/nginx.conf /etc/nginx/
-COPY --from=build nginx/conf.d/js.conf /etc/nginx/conf.d/
+COPY --from=build ../nginx/nginx.conf /etc/nginx/
+COPY --from=build ../nginx/conf.d/react.conf /etc/nginx/conf.d/
 
 EXPOSE 80
 

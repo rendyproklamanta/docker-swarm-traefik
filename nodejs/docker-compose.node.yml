@@ -1,7 +1,7 @@
 version: "3.4"
 
 services:
-  myapp:
+  api:
     image: randyproxz/nodejs
     restart: unless-stopped
     networks:
@@ -22,10 +22,11 @@ services:
         delay: 40s
       labels:
         - traefik.enable=true
-        - traefik.port=3000
+        #- traefik.port=3000
+        - traefik.port=80
         - traefik.tags=traefik-public
         - traefik.docker.network=traefik-public
-        - traefik.frontend.rule=Host:myapp.domain.com
+        - traefik.frontend.rule=Host:api.domain.com
         - traefik.frontend.entryPoints=http,https
         - traefik.frontend.redirect.entryPoint=https
 

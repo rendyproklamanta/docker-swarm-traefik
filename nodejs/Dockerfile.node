@@ -12,13 +12,19 @@ RUN date
 # Set Environment
 ENV NODE_ENV production
 ENV TZ $TZ
-ENV PATH /usr/src/app/node_modules/.bin:$PATH
+ENV PATH /app/node_modules/.bin:$PATH
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 COPY package*.json ./
 RUN npm install
 COPY . .
 
-EXPOSE 3000
+# nginx
+FROM nginx:stable-alpine
+COPY ../nginx/conf.d/nodejs.conf /etc/nginx/conf.d/
+
+EXPOSE 80
+#EXPOSE 3000
+
 CMD [ "npm", "start" ]

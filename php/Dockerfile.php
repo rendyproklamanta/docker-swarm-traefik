@@ -6,10 +6,10 @@ RUN apk add nginx
 RUN apk add php81 php81-fpm php81-opcache
 RUN apk add php81-gd php81-zlib php81-curl
 
-COPY nginx/nginx.conf /etc/nginx
-COPY nginx/conf.d/php.conf /etc/nginx/conf.d
-COPY php/conf /etc/php81
-COPY php/public /usr/share/nginx/html
+COPY ../nginx/nginx.conf /etc/nginx
+COPY ../nginx/conf.d/php.conf /etc/nginx/conf.d
+COPY conf /etc/php81
+COPY public /usr/share/nginx/html
 
 RUN mkdir /var/run/php
 
