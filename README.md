@@ -85,6 +85,14 @@ docker stack deploy -c swarmpit/docker-compose.yml swarmpit
 > Open swarmpit in browser http://<IP_ADDRESS>:888
 ```
 
+***Run service "prune-image" to delete unused image all nodes***
+
+```
+> login to server "Leader" manager
+docker service create --name prune-images --mode global --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock docker sh -c "while true; do docker image prune -af; sleep 10800; done"
+> This service will automatically delete all unused images across all nodes in every 10800 secs = 3 hours
+```
+
 ***Clone this repository***
 ```
 git clone https://github.com/rendyproklamanta/docker-swarm-traefik-ssl.git
