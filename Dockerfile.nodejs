@@ -22,6 +22,7 @@ COPY . .
 
 # nginx
 FROM nginx:stable-alpine
+RUN mkdir -p /etc/nginx/conf.d
 COPY nginx/conf.d/nodejs.conf /etc/nginx/conf.d/
 
 EXPOSE 80
