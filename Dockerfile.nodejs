@@ -16,16 +16,10 @@ ENV PATH /app/node_modules/.bin:$PATH
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY nodejs/package*.json ./
 RUN npm install
-COPY . .
+COPY nodejs .
 
-# nginx
-FROM nginx:stable-alpine
-RUN mkdir -p /etc/nginx/conf.d
-COPY nginx/conf.d/nodejs.conf /etc/nginx/conf.d/
-
-EXPOSE 80
-#EXPOSE 3000
+EXPOSE 3000
 
 CMD [ "npm", "start" ]
