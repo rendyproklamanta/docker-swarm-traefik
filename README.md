@@ -139,10 +139,10 @@ docker images
 docker ps
 ```
 
-***Deploy stack/service***
+***Deploy stack/service (sample running nodejs)***
 
 ```
-docker stack deploy --compose-file docker-compose-v1.yml mystack
+docker stack deploy --compose-file sample/docker-compose-v1.yml mystack
 ```
 
 ***Updating service***
