@@ -1,0 +1,85 @@
+version: "3.3"
+services:
+  db:
+    image: mysql:latest
+    command:
+      - --default-authentication-plugin=mysql_native_password
+    deploy:
+      mode: global
+    environment:
+      TZ: Asia/Jakarta
+      MYSQL_PASSWORD_FILE: /run/secrets/MYSQL_PASSWORD
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/MYSQL_ROOT_PASSWORD
+      MYSQL_USER_FILE: /run/secrets/MYSQL_USER
+    # ports:
+    #  - 3306:3306
+    volumes:
+      - /mnt/mysql/data:/var/lib/mysql
+    networks:
+      - traefik-public
+    secrets:
+      - MYSQL_PASSWORD
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_USER
+    logging:
+      driver: json-file
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    environment:
+      PMA_HOST: db
+      UPLOAD_LIMIT: 500MB
+    networks:
+      - traefik-public
+    deploy:
+      mode: global
+      update_config:
+        parallelism: 0
+        order: start-first
+        failure_action: rollback
+        delay: 40s
+      labels:
+        - traefik.enable=true
+        - traefik.port=80
+        - traefik.tags=traefik-public
+        - traefik.docker.network=traefik-public
+        - traefik.frontend.rule=Host:pma.domain.com
+        - traefik.frontend.entryPoints=http,https
+        - traefik.frontend.redirect.entryPoint=https
+    logging:
+      driver: json-file
+
+  mysql-backup:
+    image: dsteinkopf/backup-all-mysql:latest
+    environment:
+      TZ: Asia/Jakarta
+      BACKUP_INTERVAL: "86400"
+      MYSQL_HOST: db
+      MYSQL_USER_FILE: /run/secrets/MYSQL_USER
+      MYSQL_PASSWORD_FILE: /run/secrets/MYSQL_ROOT_PASSWORD
+    volumes:
+      - /mnt/mysql/backup:/var/dbdumps
+      - /etc/localtime:/etc/localtime
+      - /etc/timezone:/etc/timezone
+    networks:
+      - traefik-public
+    secrets:
+      - MYSQL_USER
+      - MYSQL_ROOT_PASSWORD
+    logging:
+      driver: json-file
+
+networks:
+  traefik-public:
+    external: true
+
+#docker secret create MYSQL_USER admin
+#docker secret create MYSQL_ROOT_PASSWORD myrootpassword
+#docker secret create MYSQL_PASSWORD mypassword
+secrets:
+  MYSQL_PASSWORD:
+    external: true
+  MYSQL_ROOT_PASSWORD:
+    external: true
+  MYSQL_USER:
+    external: true

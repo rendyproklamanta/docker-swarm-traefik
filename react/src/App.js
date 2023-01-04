@@ -1,7 +1,8 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-function App() {
+const AppPage = () => {
   return (
     <div className="App">
       <header className="App-header">
@@ -20,6 +21,20 @@ function App() {
       </header>
     </div>
   );
-}
+};
 
+const TestPage = () => {
+  return <>TEST PAGE</>;
+};
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route exact path="/" element={AppPage()} />
+        <Route path="/test" element={TestPage()} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
 export default App;
