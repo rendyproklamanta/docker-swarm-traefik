@@ -74,6 +74,17 @@ docker swarm join-token manager
 $ docker swarm join --token <TOKEN> <IP_LEADER>:2377
 ```
 
+***Removing node from swarm (if necessary)***
+```
+- From Master Node :
+docker node ls
+docker node demote <NODE_ID>
+docker node rm <NODE_ID> --force
+
+- From Removed Node :
+docker swarm leave --force
+```
+
 ***Install swarmpit to manage swarm***
 
 ```
@@ -111,11 +122,27 @@ docker stack deploy --compose-file traefik/traefik-v1.yml traefik
 ```
 
 **traefik-v2**
-* *in v2 to share certificates to all nodes need traefik enterprise edition (paid)*
+* *in v2 to share certificates to all nodes need traefik enterprise edition (paid version)*
 ```
 docker network create --driver=overlay traefik-public
 docker config create traefik-tls.yml traefik/traefik-v2-tls.yml
 docker stack deploy --compose-file traefik/traefik-v2.yml traefik
+```
+
+##### Note for Traefik
+```
+!! If traefik SSL error
+!! If add new node
+> remove service and delete consul-data volume in all nodes :
+
+$ docker stack rm traefik
+$ docker volume rm traefik_consul-data <- run command in all nodes
+
+> edit traefik.yml 
+(if add new node = 4)
+> replicas to 4 
+> -bootstrap-expect=4
+> And re-deploy traefik yml
 ```
 
 <hr>
@@ -131,13 +158,6 @@ docker service create --name registry --publish published=5000,target=5000 regis
 ```
 docker build -t 127.0.0.1:5000/nodejs .
 docker-compose push
-```
-
-> Remove old image and container
-
-```
-docker rmi -f $(docker images | grep "<none>" | awk "{print \$3}")
-docker container prune
 ```
 
 ***Check image***
@@ -160,7 +180,7 @@ docker stack deploy --compose-file sample/docker-compose-v1.yml mystack
 docker service update --image 127.0.0.1:5000/nodejs <service-name> -d
 ```
 
-***Scaling app (optional)***
+***Scaling app (if necessary)***
 
 ```
 docker service scale <service-name>=5
@@ -175,14 +195,29 @@ docker service logs <-f> --tail 10 <SERVICE_NAME>
 ```
 
 ***Promote Worker as new Manager***
-> login to swarm leader (manager)
+- login to swarm leader (manager)
 ```
-docker node ls <- will show list nodes and copy ID worker
+docker node ls <- will show list nodes and copy NODE_ID worker
 docker node promote <NODE_ID_WORKER>
 ```
 
 ***Other useful commands***
 ```
-docker build -t <REPO_NAME> . && docker push <REPO_NAME>
-docker exec $(docker ps -q -f name=myapp_web) curl -f http://localhost:3000 <- bash command
+> build and push to registry
+docker login <= if you want to push to hub.docker.com
+docker build -t <REPO_NAME> -f Dockerfile . && docker push <REPO_NAME>
+
+> exec service bash command
+docker exec $(docker ps -q -f name=<SERVICE_NAME>) ls /etc/nginx <- bash command
+
+> Remove unused image and container
+docker rmi -f $(docker images | grep "<none>" | awk "{print \$3}")
+docker container prune
+```
+<hr>
+
+#### Loader.io Test Result
+```
+3 nodes = 4000 clients / 15 seconds
+4 nodes = 6000 clients / 15 seconds
 ```

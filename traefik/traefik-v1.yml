@@ -70,7 +70,8 @@ services:
 
   consul:
     image: consul
-    command: agent -server -bootstrap-expect=3 -ui -client 0.0.0.0 -retry-join tasks.consul
+    command: agent -server -client 0.0.0.0 -retry-join tasks.consul
+    #command: agent -server -bootstrap-expect=3 -ui -client 0.0.0.0 -retry-join tasks.consul
     volumes:
       - consul-data:/consul/data
     environment:
@@ -81,7 +82,8 @@ services:
         published: 8500
         mode: host
     deploy:
-      replicas: 3
+      mode: global
+      #replicas: 3
       placement:
         constraints:
           - node.role == manager
