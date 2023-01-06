@@ -32,11 +32,10 @@ RUN apk add \
     # Iconv Fix
     php81-pecl-apcu
 
+RUN mkdir -p /var/run/php
+
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-RUN mkdir -p /etc/nginx/conf.d
-RUN mkdir -p /var/run/php
 
 COPY nginx/nginx.conf /etc/nginx
 COPY nginx/conf.d/php.conf /etc/nginx/conf.d/default.conf

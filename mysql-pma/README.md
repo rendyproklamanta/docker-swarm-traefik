@@ -7,23 +7,30 @@ sudo systemctl enable glusterd
 
 ```
 ssh-keygen -t rsa
-sudo mkdir -p /gluster/volume
+mkdir -p /gluster/volume
+```
+
+```
+> nano /etc/hosts
+192.168.0.1 (127.0.0.1) srv1.hostname.com
+192.168.0.2 srv2.hostname.com
+192.168.0.3 srv3.hostname.com
+
+Use 127.0.0.1 as IP if in current server
 ```
 
 ### Master node
 ```
-gluster peer probe 192.168.0.1; <- IP Node Manager 1
-gluster peer probe 192.168.0.2; <- IP Node Manager 2
-gluster peer probe 192.168.0.3; <- IP Node Manager 3
+gluster peer probe srv2.hostname.com <- IP Node Manager 2
+gluster peer probe srv3.hostname.com <- IP Node Manager 3
 ```
 
 ```
 gluster pool list
-exit - Ctrl+C
 ```
 
 ```
-sudo gluster volume create staging-gfs replica 3 192.168.0.1:/gluster/volume 192.168.0.2:/gluster/volume 192.168.0.3:/gluster/volume force
+gluster volume create staging-gfs replica 3 srv1.hostname.com:/gluster/volume srv2.hostname.com:/gluster/volume srv3.hostname.com:/gluster/volume force
 ```
 
 ```
@@ -33,9 +40,7 @@ gluster volume start staging-gfs
 ### Each nodes
 ```
 echo 'localhost:/staging-gfs /mnt glusterfs defaults,_netdev,backupvolfile-server=localhost 0 0' >> /etc/fstab
-
 mount.glusterfs localhost:/staging-gfs /mnt
-
 chown -R root:docker /mnt
 
 df -h
@@ -51,4 +56,10 @@ df -h
       - type: bind
         source: /mnt/mysql/data
         target: /var/lib/mysql
+```
+
+### Error reference
+```
+- transport endpoint is not connected 
+$ umount /mnt && mount /mnt
 ```

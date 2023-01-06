@@ -1,6 +1,6 @@
 version: "3.3"
 services:
-  db:
+  mysql:
     image: mysql:latest
     command:
       - --default-authentication-plugin=mysql_native_password
@@ -27,23 +27,18 @@ services:
   phpmyadmin:
     image: phpmyadmin:latest
     environment:
-      PMA_HOST: db
+      PMA_HOST: mysql
       UPLOAD_LIMIT: 500MB
     networks:
       - traefik-public
     deploy:
       mode: global
-      update_config:
-        parallelism: 0
-        order: start-first
-        failure_action: rollback
-        delay: 40s
       labels:
         - traefik.enable=true
         - traefik.port=80
         - traefik.tags=traefik-public
         - traefik.docker.network=traefik-public
-        - traefik.frontend.rule=Host:pma.domain.com
+        - traefik.frontend.rule=Host:pma.kaidahnetwork.com
         - traefik.frontend.entryPoints=http,https
         - traefik.frontend.redirect.entryPoint=https
     logging:
@@ -54,7 +49,7 @@ services:
     environment:
       TZ: Asia/Jakarta
       BACKUP_INTERVAL: "86400"
-      MYSQL_HOST: db
+      MYSQL_HOST: mysql
       MYSQL_USER_FILE: /run/secrets/MYSQL_USER
       MYSQL_PASSWORD_FILE: /run/secrets/MYSQL_ROOT_PASSWORD
     volumes:
@@ -63,6 +58,8 @@ services:
       - /etc/timezone:/etc/timezone
     networks:
       - traefik-public
+    deploy:
+      mode: global
     secrets:
       - MYSQL_USER
       - MYSQL_ROOT_PASSWORD

@@ -1,0 +1,21 @@
+FROM alpine:3.17
+
+RUN apk update && apk upgrade
+RUN apk add \
+    bash \
+    curl \
+    nginx \
+    npm
+
+WORKDIR /app
+
+COPY nginx/nginx.conf /etc/nginx
+COPY nginx/conf.d/nodejs.conf /etc/nginx/conf.d/default.conf
+COPY nodejs/package*.json .
+
+RUN npm install
+COPY nodejs .
+
+EXPOSE 80
+
+CMD ["/bin/bash", "-c", "nginx & npm start"]
