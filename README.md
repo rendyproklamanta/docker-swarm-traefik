@@ -1,4 +1,4 @@
-***Requirement***
+**_Requirement_**
 
 ```
 3 servers = manager (3 is minimum for fault tolerant)
@@ -9,7 +9,7 @@ NOTE: you need odd servers for fault tolerant and keep your web app running
 - 5 nodes running = 2 nodes down
 ```
 
-***Install docker on Almalinux/CentOS***
+**_Install docker on Almalinux/CentOS_**
 
 ```
 dnf --refresh update -y
@@ -35,7 +35,7 @@ firewall-cmd --permanent --add-port=4789/udp
 firewall-cmd --reload
 ```
 
-***Install docker on Ubuntu***
+**_Install docker on Ubuntu_**
 
 ```
 apt-get remove docker docker-engine docker.io
@@ -48,7 +48,7 @@ systemctl status docker
 ```
 > Add rules :
 ufw allow 2376/tcp
-ufw allow 2377/tcp 
+ufw allow 2377/tcp
 ufw allow 7946/tcp
 ufw allow 80/tcp
 ufw allow 443/tcp
@@ -59,22 +59,22 @@ ufw reload
 ufw enable
 ```
 
-***Init docker swarm in leader node***
+**_Init docker swarm in leader node_**
 
 ```
 docker swarm init --advertise-addr <PRIVATE_IP or PUBLIC_IP>
 docker swarm join-token manager
 ```
 
-
-***Assigned another node as swarm manager***
+**_Assigned another node as swarm manager_**
 
 ```
 > copy text from leader node and login to 2 servers for assign as manager
 $ docker swarm join --token <TOKEN> <IP_LEADER>:2377
 ```
 
-***Removing node from swarm (if necessary)***
+**_Removing node from swarm (if necessary)_**
+
 ```
 - From Master Node :
 docker node ls
@@ -85,7 +85,7 @@ docker node rm <NODE_ID> --force
 docker swarm leave --force
 ```
 
-***Install swarmpit to manage swarm***
+**_Install swarmpit to manage swarm_**
 
 ```
 > login to server "Leader" manager
@@ -96,7 +96,7 @@ docker stack deploy -c swarmpit/docker-compose.yml swarmpit
 > Open swarmpit in browser http://<IP_ADDRESS>:888
 ```
 
-***Run service "prune-image" to delete unused image all nodes***
+**_Run service "prune-image" to delete unused image all nodes_**
 
 ```
 > login to server "Leader" manager
@@ -104,17 +104,20 @@ docker service create --name prune-images --mode global --mount type=bind,source
 > This service will automatically delete all unused images across all nodes in every 10800 secs = 3 hours
 ```
 
-***Clone this repository***
+**_Clone this repository_**
+
 ```
 git clone https://github.com/rendyproklamanta/docker-swarm-traefik-ssl.git
 ```
 
 <hr>
 
-***Deploy traefik.yml first before deploy your app***
+**_Deploy traefik.yml first before deploy your app_**
 
 **traefik-v1**
-* *we recomend using v1 because have consul for swarm mode to share certificates accross all nodes*
+
+- _we recomend using v1 because have consul for swarm mode to share certificates accross all nodes_
+
 ```
 docker network create --driver=overlay traefik-public
 docker stack deploy --compose-file traefik/traefik-v1.yml traefik
@@ -122,7 +125,9 @@ docker stack deploy --compose-file traefik/traefik-v1.yml traefik
 ```
 
 **traefik-v2**
-* *in v2 to share certificates to all nodes need traefik enterprise edition (paid version)*
+
+- _in v2 to share certificates to all nodes need traefik enterprise edition (paid version)_
+
 ```
 docker network create --driver=overlay traefik-public
 docker config create traefik-tls.yml traefik/traefik-v2-tls.yml
@@ -130,6 +135,7 @@ docker stack deploy --compose-file traefik/traefik-v2.yml traefik
 ```
 
 ##### Note for Traefik
+
 ```
 !! If traefik SSL error
 !! If add new node
@@ -138,55 +144,57 @@ docker stack deploy --compose-file traefik/traefik-v2.yml traefik
 $ docker stack rm traefik
 $ docker volume rm traefik_consul-data <- run command in all nodes
 
-> edit traefik.yml 
+> edit traefik.yml
 (if add new node = 4)
-> replicas to 4 
+> replicas to 4
 > -bootstrap-expect=4
 > And re-deploy traefik yml
 ```
 
 <hr>
 
-***Create registry - Run below command one time only if you want to store docker registry in local***
+**_Create registry - Run below command one time only if you want to store docker registry in local_**
 
 ```
-docker service create --name registry --publish published=5000,target=5000 registry:2
+docker node update --label-add registry=true <HOSTNAME_MASTER>
+docker service create --name registry --constraint 'node.labels.registry==true' --publish published=5000,target=5000 registry:latest
 ```
 
-***Build image to store in local registry***
+**_Build image to store in local registry_**
 
 ```
 docker build -t 127.0.0.1:5000/nodejs .
 docker-compose push
 ```
 
-***Check image***
+**_Check image_**
 
 ```
 docker images
 docker ps
 ```
 
-***Deploy stack/service (sample running nodejs)***
+**_Deploy stack/service (sample running nodejs)_**
 
 ```
 docker stack deploy --compose-file sample/docker-compose-v1.yml mystack
 ```
 
-***Updating service***
+**_Updating service_**
+
 > Ps. before update service do build and push image
 
 ```
 docker service update --image 127.0.0.1:5000/nodejs <service-name> -d
 ```
 
-***Scaling app (if necessary)***
+**_Scaling app (if necessary)_**
 
 ```
 docker service scale <service-name>=5
 ```
 
-***Check services and log***
+**_Check services and log_**
 
 ```
 docker stack ls
@@ -194,14 +202,17 @@ docker services ls
 docker service logs <-f> --tail 10 <SERVICE_NAME>
 ```
 
-***Promote Worker as new Manager***
+**_Promote Worker as new Manager_**
+
 - login to swarm leader (manager)
+
 ```
 docker node ls <- will show list nodes and copy NODE_ID worker
 docker node promote <NODE_ID_WORKER>
 ```
 
-***Other useful commands***
+**_Other useful commands_**
+
 ```
 > build and push to registry
 docker login <= if you want to push to hub.docker.com
@@ -214,9 +225,11 @@ docker exec $(docker ps -q -f name=<SERVICE_NAME>) ls /etc/nginx <- bash command
 docker rmi -f $(docker images | grep "<none>" | awk "{print \$3}")
 docker container prune
 ```
+
 <hr>
 
 #### Loader.io Test Result
+
 ```
 3 nodes = 4000 clients / 15 seconds
 4 nodes = 6000 clients / 15 seconds

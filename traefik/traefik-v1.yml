@@ -70,8 +70,10 @@ services:
 
   consul:
     image: consul
-    command: agent -server -client 0.0.0.0 -retry-join tasks.consul
-    #command: agent -server -bootstrap-expect=3 -ui -client 0.0.0.0 -retry-join tasks.consul
+    # For single server
+    command: agent -server -bootstrap-expect=1 -client 0.0.0.0 -retry-join tasks.consul
+    # Uncomment below for multiple servers
+    # command: agent -server -bootstrap-expect=3 -ui -client 0.0.0.0 -retry-join tasks.consul
     volumes:
       - consul-data:/consul/data
     environment:

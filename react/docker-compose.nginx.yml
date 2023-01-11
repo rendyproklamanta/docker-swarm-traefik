@@ -2,7 +2,7 @@ version: "3.4"
 
 services:
   react:
-    image: randyproxz/react
+    image: randyproxz/react-nginx
     restart: unless-stopped
     networks:
       - traefik-public
@@ -19,7 +19,7 @@ services:
         delay: 40s
       labels:
         - traefik.enable=true
-        - traefik.port=3000
+        - traefik.port=80
         - traefik.tags=traefik-public
         - traefik.docker.network=traefik-public
         - traefik.frontend.rule=Host:react.domain.com
