@@ -1,4 +1,4 @@
-**_Requirement_**
+###Requirement
 
 ```
 3 servers = manager (3 is minimum for fault tolerant)
@@ -9,7 +9,7 @@ NOTE: you need odd servers for fault tolerant and keep your web app running
 - 5 nodes running = 2 nodes down
 ```
 
-**_Install docker on Almalinux/CentOS_**
+###Install docker on Almalinux/CentOS
 
 ```
 dnf --refresh update -y
@@ -35,7 +35,7 @@ firewall-cmd --permanent --add-port=4789/udp
 firewall-cmd --reload
 ```
 
-**_Install docker on Ubuntu_**
+###Install docker on Ubuntu
 
 ```
 apt-get remove docker docker-engine docker.io
@@ -59,21 +59,27 @@ ufw reload
 ufw enable
 ```
 
-**_Init docker swarm in leader node_**
+###SWAP
+
+```
+Install SWAP on Ubuntu 20.04 : https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-20-04
+```
+
+###Init docker swarm in leader node
 
 ```
 docker swarm init --advertise-addr <PRIVATE_IP or PUBLIC_IP>
 docker swarm join-token manager
 ```
 
-**_Assigned another node as swarm manager_**
+###Assigned another node as swarm manager
 
 ```
 > copy text from leader node and login to 2 servers for assign as manager
 $ docker swarm join --token <TOKEN> <IP_LEADER>:2377
 ```
 
-**_Removing node from swarm (if necessary)_**
+###Removing node from swarm (if necessary)
 
 ```
 - From Master Node :
@@ -85,7 +91,7 @@ docker node rm <NODE_ID> --force
 docker swarm leave --force
 ```
 
-**_Install swarmpit to manage swarm_**
+###Install swarmpit to manage swarm
 
 ```
 > login to server "Leader" manager
@@ -96,15 +102,15 @@ docker stack deploy -c swarmpit/docker-compose.yml swarmpit
 > Open swarmpit in browser http://<IP_ADDRESS>:888
 ```
 
-**_Run service "prune-image" to delete unused image all nodes_**
+###Run service "prune-image" to delete unused image all nodes
 
 ```
 > login to server "Leader" manager
-docker service create --name prune-images --mode global --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock docker sh -c "while true; do docker image prune -af; sleep 10800; done"
+docker service create --name docker-prune --mode global --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock docker sh -c "while true; do docker image prune -af && docker container prune -f; sleep 10800; done"
 > This service will automatically delete all unused images across all nodes in every 10800 secs = 3 hours
 ```
 
-**_Clone this repository_**
+###Clone this repository
 
 ```
 git clone https://github.com/rendyproklamanta/docker-swarm-traefik-ssl.git
@@ -112,7 +118,7 @@ git clone https://github.com/rendyproklamanta/docker-swarm-traefik-ssl.git
 
 <hr>
 
-**_Deploy traefik.yml first before deploy your app_**
+##Deploy traefik.yml first before deploy your app
 
 **traefik-v1**
 
@@ -153,7 +159,7 @@ $ docker volume rm traefik_consul-data <- run command in all nodes
 
 <hr>
 
-**_Create registry - Run below command one time only if you want to store docker registry in local_**
+###Create registry - Run below command one time only if you want to store docker registry in local
 
 ```
 docker node update --label-add registry=true <HOSTNAME_MASTER>
@@ -219,7 +225,7 @@ docker login <= if you want to push to hub.docker.com
 docker build -t <REPO_NAME> -f Dockerfile . && docker push <REPO_NAME>
 
 > exec service bash command
-docker exec $(docker ps -q -f name=<SERVICE_NAME>) ls /etc/nginx <- bash command
+docker exec -it $(docker ps -q -f name=<SERVICE_NAME>) sh
 
 > Remove unused image and container
 docker rmi -f $(docker images | grep "<none>" | awk "{print \$3}")

@@ -12,7 +12,12 @@ deploy_development:
   environment:
     name: development
   script:
-    - ssh -p $SSH_PORT $SSH_USER@$VM_IPADDRESS "cd ~/dir_name/domain.com && git switch dev && git pull origin dev && cd ~/dir_name/domain.com/deploy && chmod +x development.sh && ./development.sh && chmod -x development.sh"
+    - >-
+      ssh -p $SSH_PORT $SSH_USER@$VM_IPADDRESS "cd ~/dir_name/domain.com && 
+      git switch dev && git pull origin dev && 
+      cd ~/dir_name/domain.com/deploy && 
+      chmod +x development.sh && ./development.sh && 
+      chmod -x development.sh"
   only:
     - dev # branch name
 
@@ -21,6 +26,11 @@ deploy_production:
   environment:
     name: production
   script:
-    - ssh -p $SSH_PORT $SSH_USER@$VM_IPADDRESS "cd ~/dir_name/domain.com && git switch main && git pull origin main && cd ~/dir_name/domain.com/deploy && chmod +x production.sh && ./production.sh && chmod -x production.sh"
+    - >-
+      ssh -p $SSH_PORT $SSH_USER@$VM_IPADDRESS "cd ~/dir_name/domain.com && 
+      git switch main && git pull origin main && 
+      cd ~/dir_name/domain.com/deploy && 
+      chmod +x production.sh && ./production.sh && 
+      chmod -x production.sh"
   only:
     - main # branch name

@@ -1,5 +1,32 @@
 version: "3.6"
 services:
+  consul:
+    image: consul
+    # For single server
+    command: agent -server -bootstrap-expect=1 -join=consul -retry-join=consul -client=0.0.0.0 -ui
+    # Uncomment below for multiple servers
+    # command: agent -server -bootstrap-expect=3 -join=consul -retry-join=consul -client=0.0.0.0 -ui
+    volumes:
+      - consul-data:/consul/data
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+      - CONSUL_CLIENT_INTERFACE=eth0
+    ports:
+      - target: 8500
+        published: 8500
+        mode: host
+    deploy:
+      mode: global
+      #replicas: 3
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+    networks:
+      - default
+      - traefik-public
+      
   traefik_init:
     image: traefik:1.7
     command:
@@ -67,33 +94,6 @@ services:
         delay: 15s
       restart_policy:
         condition: on-failure
-
-  consul:
-    image: consul
-    # For single server
-    command: agent -server -bootstrap-expect=1 -client 0.0.0.0 -retry-join tasks.consul
-    # Uncomment below for multiple servers
-    # command: agent -server -bootstrap-expect=3 -ui -client 0.0.0.0 -retry-join tasks.consul
-    volumes:
-      - consul-data:/consul/data
-    environment:
-      - CONSUL_BIND_INTERFACE=eth0
-      - CONSUL_CLIENT_INTERFACE=eth0
-    ports:
-      - target: 8500
-        published: 8500
-        mode: host
-    deploy:
-      mode: global
-      #replicas: 3
-      placement:
-        constraints:
-          - node.role == manager
-      restart_policy:
-        condition: on-failure
-    networks:
-      - default
-      - traefik-public
   
 networks:
   traefik-public:
