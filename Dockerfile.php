@@ -39,8 +39,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 COPY nginx/nginx.conf /etc/nginx
 COPY nginx/conf.d/php.conf /etc/nginx/conf.d/default.conf
-COPY php/conf /etc/php81
-COPY php/public /usr/share/nginx/html
+COPY app/php/conf /etc/php81
+COPY app/php/public /usr/share/nginx/html
 
 EXPOSE 80
 

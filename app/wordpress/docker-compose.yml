@@ -27,21 +27,21 @@ services:
       - WORDPRESS_DB_PASSWORD
       - WORDPRESS_DB_NAME
     environment:
-        WORDPRESS_DB_HOST: /run/secrets/WORDPRESS_DB_HOST
-        WORDPRESS_DB_USER: /run/secrets/WORDPRESS_DB_USER
-        WORDPRESS_DB_PASSWORD: /run/secrets/WORDPRESS_DB_PASSWORD
-        WORDPRESS_DB_NAME: /run/secrets/WORDPRESS_DB_NAME
-        WORDPRESS_TABLE_PREFIX: wp_
-        # WORDPRESS_DEBUG: 1
+      WORDPRESS_DB_HOST: /run/secrets/WORDPRESS_DB_HOST
+      WORDPRESS_DB_USER: /run/secrets/WORDPRESS_DB_USER
+      WORDPRESS_DB_PASSWORD: /run/secrets/WORDPRESS_DB_PASSWORD
+      WORDPRESS_DB_NAME: /run/secrets/WORDPRESS_DB_NAME
+      WORDPRESS_TABLE_PREFIX: wp_
+      # WORDPRESS_DEBUG: 1
     volumes:
       - wordpress:/var/www/html
     networks:
       - traefik-public
 
-#docker secret create WORDPRESS_DB_HOST mysql
-#docker secret create WORDPRESS_DB_USER wpusr
-#docker secret create WORDPRESS_DB_PASSWORD wppassword
-#docker secret create WORDPRESS_DB_NAME wpdbname
+#printf "mysql" | docker secret create WORDPRESS_DB_HOST -
+#printf "wpusr" | docker secret create WORDPRESS_DB_USER -
+#printf "wppassword" | docker secret create WORDPRESS_DB_PASSWORD -
+#printf "wpdbname" | docker secret create WORDPRESS_DB_NAME -
 secrets:
   WORDPRESS_DB_HOST:
     external: true
@@ -60,7 +60,7 @@ volumes:
   wordpress:
     driver: local
     driver_opts:
-       o: bind
-       type: none
-       # mkdir -p /data/wordpress
-       device: /data/wordpress
+      o: bind
+      type: none
+      # mkdir -p /data/wordpress
+      device: /data/wordpress

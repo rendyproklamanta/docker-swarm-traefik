@@ -1,11 +1,12 @@
-version: "3.3"
+version: "3.8"
+
 services:
-  mysql:
-    image: mysql:latest
-    command:
-      - --default-authentication-plugin=mysql_native_password
-    deploy:
-      mode: global
+  mariadb:
+    image: mariadb:10.8.2
+    secrets:
+      - MYSQL_PASSWORD
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_USER
     environment:
       TZ: Asia/Jakarta
       MYSQL_PASSWORD_FILE: /run/secrets/MYSQL_PASSWORD
@@ -13,26 +14,28 @@ services:
       MYSQL_USER_FILE: /run/secrets/MYSQL_USER
     # ports:
     #  - 3306:3306
+    #command: ["mysqld", "--wait_timeout=28800", "--interactive_timeout=28800", "--max_allowed_packet=256M"]
     volumes:
       - /mnt/mysql/data:/var/lib/mysql
     networks:
       - traefik-public
-    secrets:
-      - MYSQL_PASSWORD
-      - MYSQL_ROOT_PASSWORD
-      - MYSQL_USER
-    logging:
-      driver: json-file
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+      replicas: 1
+      restart_policy:
+        condition: on-failure
 
   phpmyadmin:
     image: phpmyadmin:latest
     environment:
-      PMA_HOST: mysql
-      UPLOAD_LIMIT: 500MB
+      - PMA_HOST=mariadb
+      - UPLOAD_LIMIT=2G
+      - MEMORY_LIMIT=500M
     networks:
       - traefik-public
     deploy:
-      mode: global
+      replicas: 1
       labels:
         - traefik.enable=true
         - traefik.port=80
@@ -41,21 +44,17 @@ services:
         - traefik.frontend.rule=Host:pma.kaidahnetwork.com
         - traefik.frontend.entryPoints=http,https
         - traefik.frontend.redirect.entryPoint=https
-    logging:
-      driver: json-file
 
   mysql-backup:
     image: dsteinkopf/backup-all-mysql:latest
     environment:
       TZ: Asia/Jakarta
       BACKUP_INTERVAL: "86400"
-      MYSQL_HOST: mysql
+      MYSQL_HOST: mariadb
       MYSQL_USER_FILE: /run/secrets/MYSQL_USER
       MYSQL_PASSWORD_FILE: /run/secrets/MYSQL_ROOT_PASSWORD
     volumes:
       - /mnt/mysql/backup:/var/dbdumps
-      - /etc/localtime:/etc/localtime
-      - /etc/timezone:/etc/timezone
     networks:
       - traefik-public
     deploy:
@@ -63,16 +62,14 @@ services:
     secrets:
       - MYSQL_USER
       - MYSQL_ROOT_PASSWORD
-    logging:
-      driver: json-file
 
 networks:
   traefik-public:
     external: true
 
-#docker secret create MYSQL_USER admin
-#docker secret create MYSQL_ROOT_PASSWORD myrootpassword
-#docker secret create MYSQL_PASSWORD mypassword
+#printf "admin" | docker secret create MYSQL_USER -
+#printf "myrootpassword" | docker secret create MYSQL_ROOT_PASSWORD -
+#printf "mypassword" | docker secret create MYSQL_PASSWORD -
 secrets:
   MYSQL_PASSWORD:
     external: true

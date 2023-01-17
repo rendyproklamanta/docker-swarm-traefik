@@ -3,7 +3,7 @@ FROM node:alpine as build
 
 WORKDIR /app
 
-COPY react .
+COPY app/react .
 RUN rm -rf node_modules/.yarn-integrity && yarn install
 RUN yarn build
 

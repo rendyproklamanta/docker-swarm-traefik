@@ -11,7 +11,7 @@ COPY package.json .
 RUN yarn
 RUN yarn global add serve
 
-COPY . .
+COPY app/react .
 RUN yarn build
 
 EXPOSE 3000
