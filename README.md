@@ -1,4 +1,4 @@
-###Requirement
+### Requirement
 
 ```
 3 servers = manager (3 is minimum for fault tolerant)
@@ -9,7 +9,7 @@ NOTE: you need odd servers for fault tolerant and keep your web app running
 - 5 nodes running = 2 nodes down
 ```
 
-###Install docker on Almalinux/CentOS
+### Install docker on Almalinux/CentOS
 
 ```
 dnf --refresh update -y
@@ -35,7 +35,7 @@ firewall-cmd --permanent --add-port=4789/udp
 firewall-cmd --reload
 ```
 
-###Install docker on Ubuntu
+### Install docker on Ubuntu
 
 ```
 apt-get remove docker docker-engine docker.io
@@ -59,27 +59,27 @@ ufw reload
 ufw enable
 ```
 
-###SWAP
+### SWAP
 
 ```
 Install SWAP on Ubuntu 20.04 : https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-20-04
 ```
 
-###Init docker swarm in leader node
+### Init docker swarm in leader node
 
 ```
 docker swarm init --advertise-addr <PRIVATE_IP or PUBLIC_IP>
 docker swarm join-token manager
 ```
 
-###Assigned another node as swarm manager
+### Assigned another node as swarm manager
 
 ```
 > copy text from leader node and login to 2 servers for assign as manager
 $ docker swarm join --token <TOKEN> <IP_LEADER>:2377
 ```
 
-###Removing node from swarm (if necessary)
+### Removing node from swarm (if necessary)
 
 ```
 - From Master Node :
@@ -91,7 +91,7 @@ docker node rm <NODE_ID> --force
 docker swarm leave --force
 ```
 
-###Install swarmpit to manage swarm
+### Install swarmpit to manage swarm
 
 ```
 > login to server "Leader" manager
@@ -102,7 +102,7 @@ docker stack deploy -c swarmpit/docker-compose.yml swarmpit
 > Open swarmpit in browser http://<IP_ADDRESS>:888
 ```
 
-###Run service "prune-image" to delete unused image all nodes
+### Run service "prune-image" to delete unused image all nodes
 
 ```
 > login to server "Leader" manager
@@ -110,7 +110,7 @@ docker service create --name docker-prune --mode global --mount type=bind,source
 > This service will automatically delete all unused images across all nodes in every 10800 secs = 3 hours
 ```
 
-###Clone this repository
+### Clone this repository
 
 ```
 git clone https://github.com/rendyproklamanta/docker-swarm-traefik-ssl.git
@@ -118,7 +118,7 @@ git clone https://github.com/rendyproklamanta/docker-swarm-traefik-ssl.git
 
 <hr>
 
-##Deploy traefik.yml first before deploy your app
+## Deploy traefik.yml first before deploy your app
 
 **traefik-v1**
 
@@ -159,7 +159,7 @@ $ docker volume rm traefik_consul-data <- run command in all nodes
 
 <hr>
 
-###Create registry - Run below command one time only if you want to store docker registry in local
+### Create registry - Run below command one time only if you want to store docker registry in local
 
 ```
 docker node update --label-add registry=true <HOSTNAME_MASTER>
