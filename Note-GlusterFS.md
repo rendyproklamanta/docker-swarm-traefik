@@ -6,6 +6,21 @@ sudo systemctl enable glusterd
 ```
 
 ```
+> Add rules :
+
+ufw allow 24007/tcp
+ufw allow 24008/tcp
+ufw allow 24009/tcp
+ufw allow 49152/tcp
+ufw allow 38465/tcp
+ufw allow 38467/tcp
+ufw allow 111/tcp
+ufw allow 111/udp
+ufw reload
+ufw enable
+```
+
+```
 ssh-keygen -t rsa
 mkdir -p /gluster/volume
 ```
