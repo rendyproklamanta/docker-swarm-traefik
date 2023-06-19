@@ -206,6 +206,7 @@ docker service scale <service-name>=5
 docker stack ls
 docker services ls
 docker service logs <-f> --tail 10 <SERVICE_NAME>
+docker service ps --no-trunc <SERVICE_NAME>
 ```
 
 **_Promote Worker as new Manager_**
