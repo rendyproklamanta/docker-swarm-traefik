@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  mariadb:
+  db:
     image: mariadb:10.8.2
     secrets:
       - MYSQL_PASSWORD
@@ -29,7 +29,7 @@ services:
   phpmyadmin:
     image: phpmyadmin:latest
     environment:
-      - PMA_HOST=mariadb
+      - PMA_HOST=db
       - UPLOAD_LIMIT=2G
       - MEMORY_LIMIT=500M
     networks:
@@ -61,7 +61,7 @@ services:
       mode: global
     secrets:
       - MYSQL_USER
-      - MYSQL_ROOT_PASSWORD
+      - MYSQL_PASSWORD
 
 networks:
   traefik-public:
