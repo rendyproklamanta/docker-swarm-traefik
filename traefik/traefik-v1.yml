@@ -2,10 +2,13 @@ version: "3.6"
 services:
   consul:
     image: consul
-    # For single server
+
+    ## For single server
     command: agent -server -bootstrap-expect=1 -join=consul -retry-join=consul -client=0.0.0.0 -ui
-    # Uncomment below for multiple servers
+
+    ## Uncomment below for multiple servers (set bootstrap-expect with server value)
     # command: agent -server -bootstrap-expect=3 -join=consul -retry-join=consul -client=0.0.0.0 -ui
+    
     volumes:
       - consul-data:/consul/data
     environment:
@@ -26,7 +29,7 @@ services:
     networks:
       - default
       - traefik-public
-      
+
   traefik_init:
     image: traefik:1.7
     command:
@@ -83,7 +86,7 @@ services:
         published: 443
       - target: 8080
         published: 8080
-        mode: host 
+        mode: host
     deploy:
       placement:
         constraints:
@@ -94,11 +97,11 @@ services:
         delay: 15s
       restart_policy:
         condition: on-failure
-  
+
 networks:
   traefik-public:
     external: true
 
 volumes:
   consul-data:
-      driver: local
+    driver: local
