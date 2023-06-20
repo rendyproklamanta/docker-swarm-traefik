@@ -84,3 +84,11 @@ $ umount /mnt && mount /mnt
 - DNS resolution failed on host ...
 $ nano etc/hosts
 ```
+
+### /mnt not sync each server after reboot
+```
+if server1 rebooted :
+Login server2 & server2
+$ gluster peer probe srv1
+```
+
