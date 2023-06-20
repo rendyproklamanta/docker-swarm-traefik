@@ -75,6 +75,12 @@ df -h
 
 ### Error reference
 ```
+cat /var/log/glusterfs/glusterd.log
+cat /var/log/glusterfs/mnt.log
+
 - transport endpoint is not connected 
 $ umount /mnt && mount /mnt
+
+- DNS resolution failed on host ...
+$ nano etc/hosts
 ```
