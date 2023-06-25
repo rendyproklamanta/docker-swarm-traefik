@@ -1,0 +1,104 @@
+version: '3.4'
+
+services:
+  traefik_init:
+    image: traefik:1.7
+    command: 
+      - "storeconfig"
+      - "--docker"
+      - "--docker.swarmMode"
+      - "--docker.watch"
+      - "--docker.exposedbydefault=false"
+      - "--constraints=tag==traefik-public"
+      - "--entrypoints=Name:http Address::80 Redirect.EntryPoint:https"
+      - "--entrypoints=Name:https Address::443 TLS TLS.SniStrict:true TLS.MinVersion:VersionTLS12"
+      - "--consul"
+      - "--consul.endpoint=consul:8500"
+      - "--consul.prefix=traefik"
+      - "--acme"
+      - "--acme.email=acme@mydomain.org"
+      - "--acme.storage=traefik/acme/account"
+      - "--acme.entryPoint=https"
+      - "--acme.httpChallenge.entryPoint=http"
+      - "--acme.onHostRule=true"
+      - "--acme.onDemand=false"
+      - "--acme.acmelogging=true"
+      - "--logLevel=INFO"
+      - "--accessLog"
+      - "--api"
+    networks:
+      - consul
+    deploy:
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - consul
+
+  consul:
+    image: consul:latest
+    command: agent -server -client=0.0.0.0 -bootstrap-expect=3 -ui -data-dir /consul/data -retry-join consul.cluster
+    volumes:
+      - consul-data:/consul/data
+    environment:
+      - 'CONSUL_LOCAL_CONFIG={ "skip_leave_on_interrupt": true, "leave_on_terminate": false, "datacenter":"staging", "data_dir":"/consul/data", "server":true }'
+      - CONSUL_BIND_INTERFACE=eth0
+      - CONSUL_CLIENT_INTERFACE=eth0
+    networks:
+      consul:
+        aliases:
+          - consul.cluster
+      traefik-public:
+    deploy:
+      endpoint_mode: dnsrr
+      mode: global
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        reservations:
+          cpus: '0.5'
+          memory: 128M 
+      update_config:
+        parallelism: 1
+        delay: 30s
+      restart_policy:
+        condition: on-failure
+
+  traefik:
+    image: traefik:1.7
+    ports:
+      - 80:80
+      - 443:443
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == manager
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure  
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command:
+      - "--consul"
+      - "--consul.endpoint=consul:8500"
+      - "--consul.prefix=traefik"
+    networks:
+      - consul
+      - traefik-public
+    depends_on:
+      - consul
+      - traefik_init      
+        
+networks:
+  traefik-public:
+    driver: overlay
+    external: true
+  consul:
+    driver: overlay
+    external: true
+
+volumes:
+  consul-data:
