@@ -14,7 +14,7 @@ services:
       MYSQL_USER_FILE: /run/secrets/MYSQL_USER
     # ports:
     #  - 3306:3306
-    #command: ["mysqld", "--wait_timeout=28800", "--interactive_timeout=28800", "--max_allowed_packet=256M"]
+    command: ["mysqld", "--wait_timeout=28800", "--interactive_timeout=28800", "--max_allowed_packet=500M", "--innodb_buffer_pool_size=500M", "--max_connections=10000"]
     volumes:
       - /mnt/mysql/data:/var/lib/mysql
     networks:
