@@ -1,0 +1,39 @@
+version: "3.7"
+services:
+
+  traefik:
+    image: traefik:2.9
+    command:
+      - --entrypoints.http.address=:80
+      - --entrypoints.https.address=:443
+      - --providers.docker=true
+      - --api=true
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=http
+      - --certificatesresolvers.letsencrypt.acme.email=myemailtest@email.com
+      - --certificatesresolvers.letsencrypt.acme.storage=/etc/traefik/acme/acme.json
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - traefik-certificates:/etc/traefik/acme
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - traefik-public
+      
+  whoami:
+    image: containous/whoami
+    labels:
+      - traefik.http.routers.https.rule=(Host(`mydomain.com`) || Host(`www.mydomain.com`))
+      - traefik.http.routers.https.entrypoints=https
+      - traefik.http.routers.https.tls=true
+      - traefik.http.routers.https.tls.certresolver=letsencrypt
+    networks:
+      - traefik-public
+
+networks:
+  traefik-public:
+    external: true
+    
+volumes:
+  traefik-certificates:
