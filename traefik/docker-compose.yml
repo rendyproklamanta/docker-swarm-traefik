@@ -1,39 +1,47 @@
 version: "3.7"
 services:
 
-  traefik:
-    image: traefik:2.9
+ traefik:
+    image: "traefik:v2.10"
     command:
-      - --entrypoints.http.address=:80
-      - --entrypoints.https.address=:443
-      - --providers.docker=true
-      - --api=true
-      - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
-      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=http
-      - --certificatesresolvers.letsencrypt.acme.email=myemailtest@email.com
-      - --certificatesresolvers.letsencrypt.acme.storage=/etc/traefik/acme/acme.json
-    ports:
-      - 80:80
-      - 443:443
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entryPoints.websecure.address=:443"
+      # always redirect to https
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
+      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.email=testemail@email.com"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/etc/traefik/acme/acme.json"
+   ports:
+      - "80:80"
+      - "443:443"
     volumes:
-      - traefik-certificates:/etc/traefik/acme
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - "traefik-certs:/etc/traefik/acme"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
-      - traefik-public
+      - "traefik-public"
       
   whoami:
-    image: containous/whoami
+    image: "traefik/whoami"
     labels:
-      - traefik.http.routers.https.rule=(Host(`mydomain.com`) || Host(`www.mydomain.com`))
-      - traefik.http.routers.https.entrypoints=https
-      - traefik.http.routers.https.tls=true
-      - traefik.http.routers.https.tls.certresolver=letsencrypt
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.domain.com`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
+      - "traefik.http.routers.whoami.entrypoints=websecure"
+      - "traefik.http.routers.whoami.tls=true"
+      - "traefik.http.routers.whoami.tls.certresolver=letsencrypt"
     networks:
-      - traefik-public
+      - "traefik-public"
 
+# docker network create traefik-public
 networks:
   traefik-public:
     external: true
     
 volumes:
-  traefik-certificates:
+  traefik-certs:
