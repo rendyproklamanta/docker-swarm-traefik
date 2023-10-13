@@ -1,15 +1,15 @@
-version: '3.4'
+version: "3.4"
 
 services:
   traefik_init:
     image: traefik:1.7
-    command: 
+    command:
       - "storeconfig"
       - "--docker"
       - "--docker.swarmMode"
       - "--docker.watch"
       - "--docker.exposedbydefault=false"
-      - "--constraints=tag==traefik-public"
+      - "--constraints=tag==traefik-network"
       - "--entrypoints=Name:http Address::80 Redirect.EntryPoint:https"
       - "--entrypoints=Name:https Address::443 TLS TLS.SniStrict:true TLS.MinVersion:VersionTLS12"
       - "--consul"
@@ -43,7 +43,7 @@ services:
       consul:
         aliases:
           - consul.cluster
-      traefik-public:
+      traefik-network:
     deploy:
       endpoint_mode: dnsrr
       mode: global
@@ -69,13 +69,13 @@ services:
       - "--consul.prefix=traefik"
     networks:
       - consul
-      - traefik-public
+      - traefik-network
     depends_on:
       - consul
-      - traefik_init      
-        
+      - traefik_init
+
 networks:
-  traefik-public:
+  traefik-network:
     driver: overlay
     external: true
   consul:

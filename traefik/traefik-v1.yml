@@ -8,7 +8,7 @@ services:
 
     ## Uncomment below for multiple servers (set bootstrap-expect with server value)
     # command: agent -server -bootstrap-expect=3 -join=consul -retry-join=consul -client=0.0.0.0 -ui
-    
+
     volumes:
       - consul-data:/consul/data
     environment:
@@ -28,7 +28,7 @@ services:
         condition: on-failure
     networks:
       - default
-      - traefik-public
+      - traefik-network
 
   traefik_init:
     image: traefik:1.7
@@ -55,7 +55,7 @@ services:
       - "--rest"
     networks:
       - default
-      - traefik-public
+      - traefik-network
     deploy:
       placement:
         constraints:
@@ -76,7 +76,7 @@ services:
       - "--consul.prefix=traefik"
     networks:
       - default
-      - traefik-public
+      - traefik-network
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
@@ -99,7 +99,7 @@ services:
         condition: on-failure
 
 networks:
-  traefik-public:
+  traefik-network:
     external: true
 
 volumes:

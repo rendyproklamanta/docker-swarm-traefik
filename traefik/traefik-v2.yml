@@ -16,20 +16,22 @@ services:
       # Add Docker as a mounted volume, so that Traefik can read the labels of other services
       - /var/run/docker.sock:/var/run/docker.sock:ro
       # Mount the volume to store the certificates
-      - traefik-public-certificates:/certificates
+      - traefik-network-certificates:/certificates
     command:
       # Enable Docker in Traefik, so that it reads labels from Docker services
       - --providers.docker
-      - --providers.docker.constraints=Label(`traefik.constraint-label`, `traefik-public`)
+      - --providers.docker.constraints=Label(`traefik.constraint-label`, `traefik-network`)
       - --providers.docker.exposedbydefault=false
       # Enable Docker Swarm mode
       - --providers.docker.swarmmode
       - --providers.file.filename=/etc/traefik/traefik-tls.yml
-      - --entrypoints.http.address=:80
-      - --entrypoints.https.address=:443
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
       - --certificatesresolvers.le.acme.email=myemail@domain.com
       - --certificatesresolvers.le.acme.storage=/certificates/acme.json
       - --certificatesresolvers.le.acme.tlschallenge=true
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
       - --accesslog
       - --log
       - --api
@@ -39,7 +41,7 @@ services:
     networks:
       # Use the public network created to be shared between Traefik and
       # any other service that needs to be publicly available with HTTPS
-      - traefik-public
+      - traefik-network
 
 configs:
   traefik-tls.yml:
@@ -49,10 +51,10 @@ volumes:
   # Create a volume to store the certificates, there is a constraint to make sure
   # Traefik is always deployed to the same Docker node with the same volume containing
   # the HTTPS certificates
-  traefik-public-certificates:
+  traefik-network-certificates:
 
 networks:
-  # Use the previously created public network "traefik-public", shared with other
+  # Use the previously created public network "traefik-network", shared with other
   # services that need to be publicly available via this Traefik
-  traefik-public:
+  traefik-network:
     external: true

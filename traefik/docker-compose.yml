@@ -24,7 +24,7 @@ services:
       - "traefik-certs:/etc/traefik/acme"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
-      - "traefik-public"
+      - "traefik-network"
       
   whoami:
     image: "traefik/whoami"
@@ -36,11 +36,11 @@ services:
       - "traefik.http.routers.whoami.tls=true"
       - "traefik.http.routers.whoami.tls.certresolver=letsencrypt"
     networks:
-      - "traefik-public"
+      - "traefik-network"
 
-# docker network create traefik-public
+# docker network create traefik-network
 networks:
-  traefik-public:
+  traefik-network:
     external: true
     
 volumes:

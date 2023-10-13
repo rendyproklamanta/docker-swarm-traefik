@@ -125,7 +125,7 @@ git clone https://github.com/rendyproklamanta/docker-swarm-traefik-ssl.git
 - _we recomend using v1 because have consul for swarm mode to share certificates accross all nodes_
 
 ```
-docker network create --driver=overlay traefik-public
+docker network create --driver=overlay traefik-network
 docker stack deploy --compose-file traefik/traefik-v1.yml traefik
 > Open consul in browser http://<IP_ADDRESS>:8500
 ```
@@ -135,12 +135,12 @@ docker stack deploy --compose-file traefik/traefik-v1.yml traefik
 - _in v2 to share certificates to all nodes need traefik enterprise edition (paid version)_
 
 ```
-docker network create --driver=overlay traefik-public
+docker network create --driver=overlay traefik-network
 docker config create traefik-tls.yml traefik/traefik-v2-tls.yml
 docker stack deploy --compose-file traefik/traefik-v2.yml traefik
 ```
 
-##### Note for Traefik
+##### Note for Traefik v1
 
 ```
 !! If traefik SSL error
@@ -159,8 +159,8 @@ $ docker volume rm traefik_consul-data <- run command in all nodes
 
 <hr>
 
-### Create registry - Run below command one time only if you want to store docker registry in local
-
+**_Create local registry_**
+- Run below command one time only if you want to store docker registry in local
 ```
 docker node update --label-add registry=true <HOSTNAME_MASTER>
 docker service create --name registry --constraint 'node.labels.registry==true' --publish published=5000,target=5000 registry:latest

@@ -5,7 +5,7 @@ services:
     image: randyproxz/nodejs
     restart: unless-stopped
     networks:
-      - traefik-public
+      - traefik-network
     environment:
       - TZ=Asia/Jakarta
     deploy:
@@ -23,12 +23,12 @@ services:
       labels:
         - traefik.enable=true
         - traefik.port=3000
-        - traefik.tags=traefik-public
-        - traefik.docker.network=traefik-public
+        - traefik.tags=traefik-network
+        - traefik.docker.network=traefik-network
         - traefik.frontend.rule=Host:myapp.domain.com
         - traefik.frontend.entryPoints=http,https
         - traefik.frontend.redirect.entryPoint=https
 
 networks:
-  traefik-public:
+  traefik-network:
     external: true
