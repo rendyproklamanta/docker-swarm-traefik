@@ -113,7 +113,7 @@ docker service create --name docker-prune --mode global --mount type=bind,source
 ### Clone this repository
 
 ```
-git clone https://github.com/rendyproklamanta/docker-swarm-traefik-ssl.git
+git clone https://github.com/rendyproklamanta/docker-swarm-traefik.git
 ```
 
 <hr>
