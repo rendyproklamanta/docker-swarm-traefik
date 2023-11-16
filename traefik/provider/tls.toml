@@ -1,0 +1,9 @@
+[tls]
+  [tls.options]
+    [tls.options.default]
+        minVersion = "VersionTLS12"
+        sniStrict = true
+        curvePreferences = [
+            "CurveP521",
+            "CurveP384",
+        ]

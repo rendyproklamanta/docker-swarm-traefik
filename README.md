@@ -136,7 +136,6 @@ docker stack deploy --compose-file traefik/traefik-v1.yml traefik
 
 ```
 docker network create --driver=overlay traefik-network
-docker config create traefik-tls.yml traefik/traefik-v2-tls.yml
 docker stack deploy --compose-file traefik/traefik-v2.yml traefik
 ```
 

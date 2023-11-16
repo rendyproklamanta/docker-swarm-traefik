@@ -3,7 +3,6 @@ version: "3.4"
 services:
   myapp:
     image: randyproxz/nodejs
-    restart: unless-stopped
     networks:
       - traefik-network
     environment:
@@ -12,9 +11,6 @@ services:
       mode: global
       # mode: replicated
       # replicas: 3
-      rollback_config:
-        parallelism: 0
-        order: stop-first
       update_config:
         parallelism: 0
         order: start-first

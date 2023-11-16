@@ -1,23 +1,21 @@
 version: "3.7"
-services:
 
- traefik:
+services:
+  traefik:
     image: "traefik:v2.10"
     command:
-      #- "--log.level=DEBUG"
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entryPoints.websecure.address=:443"
-      # always redirect to https
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
       - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
       - "--certificatesresolvers.letsencrypt.acme.email=testemail@email.com"
       - "--certificatesresolvers.letsencrypt.acme.storage=/etc/traefik/acme/acme.json"
-   ports:
+    ports:
       - "80:80"
       - "443:443"
     volumes:
@@ -25,7 +23,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
       - "traefik-network"
-      
+
   whoami:
     image: "traefik/whoami"
     labels:
@@ -38,10 +36,9 @@ services:
     networks:
       - "traefik-network"
 
-# docker network create traefik-network
 networks:
   traefik-network:
     external: true
-    
+
 volumes:
   traefik-certs:

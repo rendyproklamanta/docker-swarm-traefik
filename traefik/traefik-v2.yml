@@ -7,24 +7,28 @@ services:
       - 80:80
       - 443:443
     deploy:
-      mode: replicated
-      replicas: 3
+      mode: global
+      #      mode: replicated
+      #      replicas: 3
       placement:
         # Deploy traefik to node manager only!
         constraints: [node.role == manager]
     volumes:
-      # Add Docker as a mounted volume, so that Traefik can read the labels of other services
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      # Mount the volume to store the certificates
       - traefik-network-certificates:/certificates
+      - ./provider:/provider:ro
     command:
-      # Enable Docker in Traefik, so that it reads labels from Docker services
       - --providers.docker
+      - --providers.docker.network=traefik-network
       - --providers.docker.constraints=Label(`traefik.constraint-label`, `traefik-network`)
+      - --providers.docker.httpClientTimeout=10m
+      - --serversTransport.forwardingTimeouts.idleConnTimeout=10m
+      - --serversTransport.forwardingTimeouts.responseHeaderTimeout=10m
+      - --serversTransport.forwardingTimeouts.dialTimeout=10m
       - --providers.docker.exposedbydefault=false
-      # Enable Docker Swarm mode
       - --providers.docker.swarmmode
-      - --providers.file.filename=/etc/traefik/traefik-tls.yml
+      - --providers.file.directory=/provider
+      # - --providers.file.filename=/etc/traefik/traefik-tls.yml
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
       - --certificatesresolvers.le.acme.email=myemail@domain.com
@@ -35,17 +39,17 @@ services:
       - --accesslog
       - --log
       - --api
-    configs:
-      - source: traefik-tls.yml
-        target: /etc/traefik/traefik-tls.yml
+    # configs:
+    #   - source: traefik-tls.yml
+    #     target: /etc/traefik/traefik-tls.yml
     networks:
       # Use the public network created to be shared between Traefik and
       # any other service that needs to be publicly available with HTTPS
       - traefik-network
 
-configs:
-  traefik-tls.yml:
-    external: true
+# configs:
+#   traefik-tls.yml:
+#     external: true
 
 volumes:
   # Create a volume to store the certificates, there is a constraint to make sure
