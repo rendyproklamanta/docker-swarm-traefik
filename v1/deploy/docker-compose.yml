@@ -2,20 +2,20 @@ version: "3.4"
 
 services:
   myapp:
-    image: randyproxz/nodejs
+    image: "traefik/whoami"
     networks:
       - traefik-network
     environment:
       - TZ=Asia/Jakarta
     deploy:
-      mode: global
-      # mode: replicated
-      # replicas: 3
-      update_config:
-        parallelism: 0
-        order: start-first
-        failure_action: rollback
-        delay: 40s
+      # mode: global
+      mode: replicated
+      replicas: 3
+      # update_config:
+      #   parallelism: 0
+      #   order: start-first
+      #   failure_action: rollback
+      #   delay: 40s
       labels:
         - traefik.enable=true
         - traefik.port=3000

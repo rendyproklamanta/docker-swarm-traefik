@@ -7,9 +7,9 @@ services:
       - 80:80
       - 443:443
     deploy:
-      mode: global
-      #      mode: replicated
-      #      replicas: 3
+      # mode: global
+      mode: replicated
+      replicas: 3
       placement:
         # Deploy traefik to node manager only!
         constraints: [node.role == manager]
@@ -43,8 +43,6 @@ services:
     #   - source: traefik-tls.yml
     #     target: /etc/traefik/traefik-tls.yml
     networks:
-      # Use the public network created to be shared between Traefik and
-      # any other service that needs to be publicly available with HTTPS
       - traefik-network
 
 # configs:
@@ -52,13 +50,9 @@ services:
 #     external: true
 
 volumes:
-  # Create a volume to store the certificates, there is a constraint to make sure
-  # Traefik is always deployed to the same Docker node with the same volume containing
-  # the HTTPS certificates
+  # HTTPS certificates
   traefik-network-certificates:
 
 networks:
-  # Use the previously created public network "traefik-network", shared with other
-  # services that need to be publicly available via this Traefik
   traefik-network:
     external: true
