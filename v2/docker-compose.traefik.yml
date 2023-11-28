@@ -6,6 +6,8 @@ services:
     ports:
       - 80:80
       - 443:443
+      - 9000:9000
+      - 8080:8080
     deploy:
       # mode: global
       mode: replicated
@@ -20,7 +22,6 @@ services:
     command:
       - --providers.docker
       - --providers.docker.network=traefik-network
-      - --providers.docker.constraints=Label(`traefik.constraint-label`, `traefik-network`)
       - --providers.docker.httpClientTimeout=10m
       - --serversTransport.forwardingTimeouts.idleConnTimeout=10m
       - --serversTransport.forwardingTimeouts.responseHeaderTimeout=10m
