@@ -8,3 +8,5 @@
     accessControlMaxAge = 100
     addVaryheader = true
     referrerPolicy = "origin-when-cross-origin"
+    frameDeny = true
+    browserxssfilter = true
