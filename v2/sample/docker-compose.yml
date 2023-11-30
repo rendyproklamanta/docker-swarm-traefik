@@ -26,11 +26,11 @@ services:
         - "traefik.http.routers.myapp.tls.certresolver=le"
         # change Port of your app (3000=JS, 80=PHP/HTML)
         - "traefik.http.services.myapp.loadbalancer.server.port=80"
-        - "traefik.http.middlewares.myapp-middlewares.headers.stsincludesubdomains=false"
-        - "traefik.http.middlewares.myapp-middlewares.headers.stspreload=true"
-        - "traefik.http.middlewares.myapp-middlewares.headers.stsseconds=31536000"
-        - "traefik.http.middlewares.myapp-middlewares.headers.isdevelopment=false"
-        - "traefik.http.routers.myapp.middlewares=myapp-middlewares"
+        - "traefik.http.services.myapp.loadbalancer.sticky.cookie=true"
+        - "traefik.http.services.myapp.loadbalancer.sticky.cookie.httpOnly=true"
+        - "traefik.http.services.myapp.loadbalancer.sticky.cookie.name=mydomain"
+        - "traefik.http.services.myapp.loadbalancer.sticky.cookie.secure=true"
+        - "traefik.http.routers.myapp.middlewares=default-middlewares@file"
 
 networks:
   traefik-network:
