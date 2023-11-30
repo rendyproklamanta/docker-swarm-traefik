@@ -1,0 +1,10 @@
+[http.middlewares]
+  [http.middlewares.default-middlewares.headers]
+    stsIncludeSubdomains = false
+    stsPreload = true
+    stsSeconds = 31536000
+    isDevelopment = false
+    contentTypeNosniff = true
+    accessControlMaxAge = 100
+    addVaryheader = true
+    referrerPolicy = "origin-when-cross-origin"
