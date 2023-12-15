@@ -35,8 +35,6 @@ services:
       - --certificatesresolvers.le.acme.email=myemail@domain.com
       - --certificatesresolvers.le.acme.storage=/certificates/acme.json
       - --certificatesresolvers.le.acme.tlschallenge=true
-      - --entrypoints.web.http.redirections.entryPoint.to=websecure
-      - --entrypoints.web.http.redirections.entryPoint.scheme=https
       - --accesslog
       - --log
       - --api
