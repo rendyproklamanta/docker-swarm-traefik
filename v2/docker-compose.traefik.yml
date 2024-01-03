@@ -7,7 +7,6 @@ services:
       - 80:80
       - 443:443
       - 9000:9000
-      - 8080:8080
     deploy:
       # mode: global
       mode: replicated
@@ -18,7 +17,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - traefik-network-certificates:/certificates
-      - ./provider:/provider:ro
+      - ./provider:/provider:rw
     command:
       - --providers.docker
       - --providers.docker.network=traefik-network
@@ -29,7 +28,6 @@ services:
       - --providers.docker.exposedbydefault=false
       - --providers.docker.swarmmode
       - --providers.file.directory=/provider
-      # - --providers.file.filename=/etc/traefik/traefik-tls.yml
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
       - --certificatesresolvers.le.acme.email=myemail@domain.com
@@ -37,16 +35,8 @@ services:
       - --certificatesresolvers.le.acme.tlschallenge=true
       - --accesslog
       - --log
-      - --api
-    # configs:
-    #   - source: traefik-tls.yml
-    #     target: /etc/traefik/traefik-tls.yml
     networks:
       - traefik-network
-
-# configs:
-#   traefik-tls.yml:
-#     external: true
 
 volumes:
   # HTTPS certificates
