@@ -11,7 +11,7 @@ mkdir -p /var/lib/traefik
 cd /var/lib/traefik
 ```
 ```
-git clone https://github.com/rendyproklamanta/docker-swarm-traefik.git
+git clone https://github.com/rendyproklamanta/docker-swarm-traefik.git .
 ```
 
 - ### Deploy traefik.yml first before deploy your app
