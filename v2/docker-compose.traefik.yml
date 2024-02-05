@@ -17,7 +17,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - traefik-network-certificates:/certificates
-      - ./provider:/provider:rw
+      - ./provider:/provider
     command:
       - --providers.docker
       - --providers.docker.network=traefik-network
