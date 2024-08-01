@@ -13,20 +13,20 @@ services:
       replicas: 1
       placement:
         # Deploy traefik to node manager only!
-        constraints: [node.role == manager]
+        constraints: [node.role == manager] 
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - traefik-network-certificates:/certificates
+      - traefik-certificates:/certificates
       - ./provider:/provider
     command:
       - --providers.docker
       - --providers.docker.network=traefik-network
-      - --providers.docker.httpClientTimeout=10m
-      - --serversTransport.forwardingTimeouts.idleConnTimeout=10m
-      - --serversTransport.forwardingTimeouts.responseHeaderTimeout=10m
-      - --serversTransport.forwardingTimeouts.dialTimeout=10m
+      - --providers.docker.httpClientTimeout=30m
+      - --serversTransport.forwardingTimeouts.idleConnTimeout=30m
+      - --serversTransport.forwardingTimeouts.responseHeaderTimeout=30m
+      - --serversTransport.forwardingTimeouts.dialTimeout=30m
       - --providers.docker.exposedbydefault=false
-      - --providers.docker.swarmmode
+      - --providers.docker.swarmmode=true
       - --providers.file.directory=/provider
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
@@ -40,7 +40,7 @@ services:
 
 volumes:
   # HTTPS certificates
-  traefik-network-certificates:
+  traefik-certificates:
 
 networks:
   traefik-network:

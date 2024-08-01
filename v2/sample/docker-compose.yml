@@ -3,39 +3,41 @@ version: "3.4"
 services:
   myapp:
     image: "traefik/whoami"
-    networks:
-      - traefik-network
     environment:
       - TZ=Asia/Jakarta
     volumes:
       - /tmp:/tmp
     deploy:
-      # mode: global
-      mode: replicated
-      replicas: 2
+      mode: global
+      # mode: replicated
+      # replicas: 2
+      placement:
+        constraints:
+          - node.role == worker
       labels:
         - "traefik.enable=true"
-        - "traefik.docker.lbswarm=true"
         - "traefik.docker.network=traefik-network"
-        
+
         # http
-        - "traefik.http.routers.myapp-production-http.rule=Host(`domain.com`,`www.domain.com`)"
-        - "traefik.http.routers.myapp-production-http.entrypoints=web"
+        - "traefik.http.routers.myapp-http.rule=Host(`domain.com`,`www.domain.com`)"
+        - "traefik.http.routers.myapp-http.entrypoints=web"
 
         # https
-        - "traefik.http.routers.myapp-production.rule=Host(`domain.com`,`www.domain.com`)"
-        - "traefik.http.routers.myapp-production.entrypoints=websecure"
-        - "traefik.http.routers.myapp-production.tls=true"
-        - "traefik.http.routers.myapp-production.tls.options=default"
-        - "traefik.http.routers.myapp-production.tls.certresolver=le"
+        - "traefik.http.routers.myapp.rule=Host(`domain.com`,`www.domain.com`)"
+        - "traefik.http.routers.myapp.entrypoints=websecure"
+        - "traefik.http.routers.myapp.tls=true"
+        - "traefik.http.routers.myapp.tls.options=default"
+        - "traefik.http.routers.myapp.tls.certresolver=le"
+        - "traefik.http.routers.myapp.middlewares=default-middlewares@file"
 
         # Service
-        - "traefik.http.services.myapp-production.loadbalancer.server.port=80"
-        - "traefik.http.services.myapp-production.loadbalancer.sticky.cookie=true"
-        - "traefik.http.services.myapp-production.loadbalancer.sticky.cookie.httpOnly=true"
-        - "traefik.http.services.myapp-production.loadbalancer.sticky.cookie.name=appname"
-        - "traefik.http.services.myapp-production.loadbalancer.sticky.cookie.secure=true"
-        - "traefik.http.routers.myapp-production.middlewares=default-middlewares@file"
+        - "traefik.http.services.myapp.loadbalancer.server.port=80"
+        - "traefik.http.services.myapp.loadbalancer.sticky.cookie=true"
+        - "traefik.http.services.myapp.loadbalancer.sticky.cookie.httpOnly=true"
+        - "traefik.http.services.myapp.loadbalancer.sticky.cookie.name=appname"
+        - "traefik.http.services.myapp.loadbalancer.sticky.cookie.secure=true"
+    networks:
+      - traefik-network
 
 networks:
   traefik-network:
