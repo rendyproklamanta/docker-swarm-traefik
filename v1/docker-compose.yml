@@ -67,6 +67,11 @@ services:
 
   traefik:
     image: traefik:1.7
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "1"
     depends_on:
       - traefik_init
       - consul
