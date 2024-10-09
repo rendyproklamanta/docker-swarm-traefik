@@ -1,0 +1,42 @@
+api:
+  dashboard: true
+  insecure: true
+
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+
+certificatesResolvers:
+  le:
+    acme:
+      email: "myemail@domain.com"
+      storage: "/certificates/acme.json"
+      tlsChallenge: {}
+
+providers:
+  docker:
+    network: "traefik-network"
+    httpClientTimeout: "30m"
+    swarmMode: true
+    exposedByDefault: false
+  file:
+    directory: "/provider"
+
+serversTransport:
+  forwardingTimeouts:
+    idleConnTimeout: "30m"
+    responseHeaderTimeout: "30m"
+    dialTimeout: "30m"
+
+experimental:
+  plugins:
+    traefik-modsecurity-plugin:
+      moduleName: "github.com/madebymode/traefik-modsecurity-plugin"
+      version: "v1.6.0"
+
+accessLog: {}
+
+log:
+  level: DEBUG

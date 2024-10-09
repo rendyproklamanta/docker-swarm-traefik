@@ -1,0 +1,10 @@
+[http.middlewares]
+  [http.middlewares.modsecurity-plugin]
+    [http.middlewares.modsecurity-plugin.plugin]
+      [http.middlewares.modsecurity-plugin.plugin.traefik-modsecurity-plugin]
+        BadRequestsThresholdCount = "25"
+        BadRequestsThresholdPeriodSecs = "600"
+        JailEnabled = "false"
+        JailTimeDurationSecs = "600"
+        ModsecurityUrl = "http://waf:80"
+        TimeoutMillis = "2000"

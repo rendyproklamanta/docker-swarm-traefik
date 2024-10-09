@@ -12,6 +12,13 @@ services:
       options:
         max-size: "10m"
         max-file: "1"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik-certificates:/certificates
+      - ./provider:/provider
+      - ./traefik.yml:/etc/traefik/traefik.yml
+    command:
+      - --configFile=/etc/traefik/traefik.yml # Load all configuration from traefik.yml
     deploy:
       # mode: global
       mode: replicated
@@ -19,29 +26,65 @@ services:
       placement:
         # Deploy traefik to node manager only!
         constraints: [node.role == manager]
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - traefik-certificates:/certificates
-      - ./provider:/provider
-    command:
-      - --providers.docker
-      - --providers.docker.network=traefik-network
-      - --providers.docker.httpClientTimeout=30m
-      - --serversTransport.forwardingTimeouts.idleConnTimeout=30m
-      - --serversTransport.forwardingTimeouts.responseHeaderTimeout=30m
-      - --serversTransport.forwardingTimeouts.dialTimeout=30m
-      - --providers.docker.exposedbydefault=false
-      - --providers.docker.swarmmode=true
-      - --providers.file.directory=/provider
-      - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
-      - --certificatesresolvers.le.acme.email=myemail@domain.com
-      - --certificatesresolvers.le.acme.storage=/certificates/acme.json
-      - --certificatesresolvers.le.acme.tlschallenge=true
-      - --accesslog
-      - --log
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.lbswarm=true"
+        - "traefik.docker.network=traefik-network"
+        - "traefik.http.routers.api.service=api@internal"
+        - "traefik.http.routers.api.entrypoints=web"
+        - "traefik.http.routers.api.rule=Host(`127.0.0.1`)" # <- Change with your IP Address
+        - "traefik.http.services.api.loadbalancer.server.port=8080"
+        - "traefik.http.routers.api.middlewares=auth-traefik"
+        - "traefik.http.middlewares.auth-traefik.basicauth.users=admin:$$2y$$05$$hhTxWvk54ohYF4ElaOcibOeb6qU9IH5vBZrLl73UUqDg3KUAwXWmi" # admin:traefikdash
     networks:
       - traefik-network
+
+  ## Ref: https://plugins.traefik.io/plugins/644d9a72ebafd55c9c740848/mx-m-owasp-crs-modsecurity-plugin
+  waf:
+    image: owasp/modsecurity-crs:4-apache-202404070904
+    environment:
+      - PARANOIA=1
+      - ANOMALY_INBOUND=10
+      - ANOMALY_OUTBOUND=5
+      - BACKEND=http://dummy
+      - REPORTING_LEVEL=2
+      - MODSEC_AUDIT_LOG_FORMAT=JSON
+      - MODSEC_RULE_ENGINE=On
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.lbswarm=true"
+        - "traefik.docker.network=traefik-network"
+        - "traefik.http.services.waf.loadbalancer.server.port=80"
+    networks:
+      - traefik-network
+
+  dummy:
+    image: traefik/whoami
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.lbswarm=true"
+        - "traefik.docker.network=traefik-network"
+        - "traefik.http.services.dummy.loadbalancer.server.port=80"
+    networks:
+      - traefik-network
+
+## Uncomment below if you want to test WAF is working properly
+#  waf-test:
+#    image: traefik/whoami
+#    deploy:
+#      labels:
+#        - "traefik.enable=true"
+#        - "traefik.docker.lbswarm=true"
+#        - "traefik.docker.network=traefik-network"
+#        - "traefik.http.routers.waf-test.rule=Host(`127.0.0.1`)" # <- Change with your IP Address
+#        - "traefik.http.routers.waf-test.rule=PathPrefix(`/waf`)"
+#        - "traefik.http.routers.waf-test.entrypoints=web"
+#        - "traefik.http.services.waf-test.loadbalancer.server.port=80"
+#        - "traefik.http.routers.waf-test.middlewares=modsecurity-plugin@file"
+#    networks:
+#      - traefik-network
 
 volumes:
   # HTTPS certificates
