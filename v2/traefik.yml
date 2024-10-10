@@ -39,7 +39,9 @@ experimental:
       moduleName: "github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin"
       version: "v1.3.4"
 
-accessLog: {}
+accessLog:
+  filePath: "/var/log/traefik/access.log"  # Path to the Traefik access log file
+  format: json 
 
 log:
   level: DEBUG
