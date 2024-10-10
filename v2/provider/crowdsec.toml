@@ -1,4 +1,3 @@
-
 [http]
   [http.middlewares]
     [http.middlewares.crowdsec-plugin]
@@ -6,4 +5,4 @@
         [http.middlewares.crowdsec-plugin.plugin.crowdsec-bouncer-traefik-plugin]
           Enabled = "true"
           CrowdsecLapiKey = "LAPI_CROWDSEC_BOUNCER_KEY"
-					CrowdsecLapiHost = "crowdsec:8080"
+          CrowdsecLapiHost = "crowdsec:80"

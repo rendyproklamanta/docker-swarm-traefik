@@ -1,0 +1,65 @@
+api:
+  dashboard: true
+  debug: true
+
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      middlewares:
+        - "crowdsec-plugin@file"
+      # redirections:
+      #   entryPoint:
+      #     to: https
+      #     scheme: https
+  websecure:
+    address: ":443"
+    http:
+      middlewares:
+        - "default-headers@file"
+        - "crowdsec-plugin@file"
+        
+serversTransport:
+  insecureSkipVerify: true
+
+providers:
+  docker:
+    network: "traefik-network"
+    httpClientTimeout: "30m"
+    swarmMode: true
+    exposedByDefault: false
+  file:
+    filename: /config.yml
+
+certificatesResolvers:
+  le:
+    acme:
+      email: "myemail@domain.com"
+      storage: "/certificates/acme.json"
+      tlsChallenge: {}
+  cloudflare:
+    acme:
+      email: EMAIL_ID@EMAIL.com
+      storage: "/cert-cf/acme.json"
+      dnsChallenge:
+        provider: cloudflare
+        #disablePropagationCheck: true # uncomment this if you have issues pulling certificates through cloudflare, By setting this flag to true disables the need to wait for the propagation of the TXT record to all authoritative name servers.
+        resolvers:
+          - "1.1.1.1:53"
+          - "1.0.0.1:53"
+
+log:
+  level: "INFO"
+  filePath: "/var/log/traefik/traefik.log"
+
+accessLog:
+  filePath: "/var/log/traefik/access.log"
+
+experimental:
+  plugins:
+    traefik-modsecurity-plugin:
+      moduleName: "github.com/madebymode/traefik-modsecurity-plugin"
+      version: "v1.6.0"
+    bouncer:
+      moduleName: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
+      version: v1.3.3

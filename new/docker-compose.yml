@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  traefik:
+    image: traefik:latest
+    ports:
+      - 80:80
+      - 443:443
+      - 9000:9000
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "1"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik-certificates:/certificates
+      - cert-cf:/cert-cf/acme.json"
+      - /etc/localtime:/etc/localtime:ro
+      - ./conf/traefik.yml:/traefik.yml:ro
+      - ./conf/config.yml:/config.yml:ro
+      - /var/log/traefik:/var/log/traefik
+    networks:
+      - traefik-network
+
+volumes:
+  # HTTPS certificates
+  traefik-certificates:
+  cert-cf:
+
+networks:
+  traefik-network:
+    external: true
