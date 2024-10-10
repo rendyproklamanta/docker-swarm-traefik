@@ -1,9 +1,10 @@
 # How To Use
 
-## Login to server and create dir
+## Create traefik dir & log
 
 ```shell
 mkdir -p /var/lib/traefik
+mkdir -p /var/log/traefik && chown -R 755 /var/log/traefik
 ```
 
 ## Clone this repository
@@ -13,46 +14,28 @@ cd /var/lib/traefik
 git clone https://github.com/rendyproklamanta/docker-swarm-traefik.git .
 ```
 
-## Deploy traefik.yml first before deploy your app
-
-### **Traefik v1**
-
-- we recomend using v1 because have consul for swarm mode to share certificates accross all nodes_
+## Change IP by using text replacing tool
 
 ```shell
-docker network create --driver=overlay traefik-network
-docker stack deploy --compose-file v1/docker-compose.yml traefik
+find -type f -exec sed -i 's/IP_ADDRESS_SET/YOUR_IP_ADDRESS/g' {} +
 ```
 
-- Open consul in browser http://<IP_ADDRESS>:8500
-
-### **Traefik v2**
-
-- in v2 to share certificates to all nodes need traefik enterprise edition (paid version)_
+## Deploy traefik.yml first before deploy your app
 
 ```shell
 docker network create --driver=overlay traefik-network
 docker stack deploy --compose-file v2/docker-compose.yml traefik
 ```
 
+## Install plugins
+
+- modsecurity
+- crowdsec
+
+```shell
+cd plugins
+```
+
 ### Notes
 
-- For Traefik v1 only
-
-```shell
-> edit traefik.yml
-(if add new node = 4)
-> replicas to 4
-> -bootstrap-expect=4
-> And re-deploy traefik yml
-```
-
-- If traefik SSL error or add new node
-
-```shell
-Remove service and delete volume in / consul-data in all nodes :
-
-$ docker stack rm traefik
-$ docker volume ls
-$ docker volume rm traefik_Volume
-```
+- in v2 to share certificates across all nodes need traefik enterprise edition (paid version)

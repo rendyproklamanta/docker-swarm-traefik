@@ -35,6 +35,9 @@ experimental:
     traefik-modsecurity-plugin:
       moduleName: "github.com/madebymode/traefik-modsecurity-plugin"
       version: "v1.6.0"
+    crowdsec-bouncer-traefik-plugin:
+      moduleName: "github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin"
+      version: "v1.3.4"
 
 accessLog: {}
 

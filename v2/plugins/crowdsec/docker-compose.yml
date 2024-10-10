@@ -1,0 +1,51 @@
+version: "3.3"
+
+services:
+  crowdsec:
+    image: crowdsecurity/crowdsec:v1.6.1-2
+    hostname: crowdsec
+    environment:
+      COLLECTIONS: crowdsecurity/traefik crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules
+      CUSTOM_HOSTNAME: crowdsec
+      # We need to register one api key per service we will use
+      BOUNCER_KEY_TRAEFIK: LAPI_CROWDSEC_BOUNCER_KEY
+    volumes:
+      - ./acquis.yaml:/etc/crowdsec/acquis.yaml:ro
+      - ./crowdsec:/etc/crowdsec
+      - ./data:/var/lib/crowdsec/data
+      - /var/log/crowdsec:/var/log/crowdsec
+      # Assign all logs you want to monitor
+      - /var/log/traefik:/var/log/traefik:ro
+      - /var/log/nginx:/var/log/nginx:ro
+      - /var/log/auth.log:/var/log/auth.log:ro
+      - /var/log/ufw.log:/var/log/ufw.log:ro
+      - /var/log/syslog:/var/log/syslog:ro
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.lbswarm=true"
+        - "traefik.docker.network=traefik-network"
+        - "traefik.http.services.crowdsec.loadbalancer.server.port=8080"
+    networks:
+      - traefik-network
+
+## Uncomment below if you want to test plugin is working properly
+#  crowdsec-test:
+#    image: traefik/whoami
+#    deploy:
+#      labels:
+#        - "traefik.enable=true"
+#        - "traefik.docker.lbswarm=true"
+#        - "traefik.docker.network=traefik-network"
+#        - "traefik.http.routers.crowdsec-test.rule=Host(`127.0.0.1`)" # <- Change with your IP Address
+#        - "traefik.http.routers.crowdsec-test.rule=PathPrefix(`/crowdsec`)"
+#        - "traefik.http.routers.crowdsec-test.entrypoints=web"
+#        - "traefik.http.services.crowdsec-test.loadbalancer.server.port=80"
+#        # Middleware crowdsec configuration
+#        - "traefik.http.routers.crowdsec-test.middlewares=crowdsec-plugin@file"
+#    networks:
+#      - traefik-network
+
+networks:
+  traefik-network:
+    external: true

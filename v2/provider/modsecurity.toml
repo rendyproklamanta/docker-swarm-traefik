@@ -6,5 +6,5 @@
         BadRequestsThresholdPeriodSecs = "600"
         JailEnabled = "false"
         JailTimeDurationSecs = "600"
-        ModsecurityUrl = "http://waf:80"
+        ModsecurityUrl = "http://modsecurity:80"
         TimeoutMillis = "2000"

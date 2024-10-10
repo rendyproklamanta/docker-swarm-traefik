@@ -1,0 +1,53 @@
+version: "3.3"
+
+services:
+  ## Ref: https://plugins.traefik.io/plugins/644d9a72ebafd55c9c740848/mx-m-owasp-crs-modsecurity-plugin
+  modsecurity:
+    image: owasp/modsecurity-crs:4-apache-202404070904
+    environment:
+      - PARANOIA=1
+      - ANOMALY_INBOUND=10
+      - ANOMALY_OUTBOUND=5
+      - BACKEND=http://dummy
+      - REPORTING_LEVEL=2
+      - MODSEC_AUDIT_LOG_FORMAT=JSON
+      - MODSEC_RULE_ENGINE=On
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.lbswarm=true"
+        - "traefik.docker.network=traefik-network"
+        - "traefik.http.services.modsecurity.loadbalancer.server.port=80"
+    networks:
+      - traefik-network
+
+  dummy:
+    image: traefik/whoami
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.lbswarm=true"
+        - "traefik.docker.network=traefik-network"
+        - "traefik.http.services.dummy.loadbalancer.server.port=80"
+    networks:
+      - traefik-network
+
+## Uncomment below if you want to test plugin is working properly
+#  modsecurity-test:
+#    image: traefik/whoami
+#    deploy:
+#      labels:
+#        - "traefik.enable=true"
+#        - "traefik.docker.lbswarm=true"
+#        - "traefik.docker.network=traefik-network"
+#        - "traefik.http.routers.modsecurity-test.rule=Host(`127.0.0.1`)" # <- Change with your IP Address
+#        - "traefik.http.routers.modsecurity-test.rule=PathPrefix(`/modsecurity`)"
+#        - "traefik.http.routers.modsecurity-test.entrypoints=web"
+#        - "traefik.http.services.modsecurity-test.loadbalancer.server.port=80"
+#        - "traefik.http.routers.modsecurity-test.middlewares=modsecurity-plugin@file"
+#    networks:
+#      - traefik-network
+
+networks:
+  traefik-network:
+    external: true
