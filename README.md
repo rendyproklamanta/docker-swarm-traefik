@@ -14,17 +14,30 @@ cd /var/lib/traefik
 git clone https://github.com/rendyproklamanta/docker-swarm-traefik.git .
 ```
 
-## Change IP by using text replacing tool
+## Go to dir
 
 ```shell
-find -type f -exec sed -i 's/IP_ADDRESS_SET/YOUR_IP_ADDRESS/g' {} +
+cd v1
+cd v2
+cd v3
+```
+
+## Change traefik dashboard access by IP or domain
+
+```shell
+nano docker-compose.yml
+```
+
+## Create traefik network
+
+```shell
+docker network create --driver=overlay traefik-network
 ```
 
 ## Deploy traefik.yml first before deploy your app
 
 ```shell
-docker network create --driver=overlay traefik-network
-docker stack deploy --compose-file v2/docker-compose.yml traefik
+docker stack deploy --compose-file docker-compose.yml traefik
 ```
 
 ## Install plugins

@@ -12,23 +12,11 @@ services:
       - REPORTING_LEVEL=2
       - MODSEC_AUDIT_LOG_FORMAT=JSON
       - MODSEC_RULE_ENGINE=On
-    deploy:
-      labels:
-        - "traefik.enable=true"
-        - "traefik.docker.lbswarm=true"
-        - "traefik.docker.network=traefik-network"
-        - "traefik.http.services.modsecurity.loadbalancer.server.port=80"
     networks:
       - traefik-network
 
   dummy:
     image: traefik/whoami
-    deploy:
-      labels:
-        - "traefik.enable=true"
-        - "traefik.docker.lbswarm=true"
-        - "traefik.docker.network=traefik-network"
-        - "traefik.http.services.dummy.loadbalancer.server.port=80"
     networks:
       - traefik-network
 

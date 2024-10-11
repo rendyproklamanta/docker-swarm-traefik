@@ -1,0 +1,80 @@
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+      cipherSuites:
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+        - TLS_AES_128_GCM_SHA256
+        - TLS_AES_256_GCM_SHA384
+        - TLS_CHACHA20_POLY1305_SHA256
+      curvePreferences:
+        - CurveP521
+        - CurveP384
+
+http:
+  # define middlewares
+  middlewares:
+
+    # define some security header options,
+    default-headers:
+      headers:
+        browserXssFilter: true
+        contentTypeNosniff: true
+        frameDeny: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 31536000
+        isDevelopment: false
+        accessControlMaxAge: 100
+        addVaryheader: true
+        referrerPolicy: "origin-when-cross-origin"
+        customFrameOptionsValue: "SAMEORIGIN"
+        customResponseHeaders:
+          # prevent some applications to expose too much information by removing thise headers:
+          server: ""
+          x-powered-by: ""
+
+    # List of Plugins
+    crowdsec-plugin:
+      plugin:
+        bouncer:
+          enabled: true
+          logLevel: DEBUG
+          updateIntervalSeconds: 15
+          updateMaxFailure: 0
+          defaultDecisionSeconds: 15
+          httpTimeoutSeconds: 10
+          crowdsecMode: live
+          crowdsecAppsecEnabled: false
+          crowdsecAppsecHost: crowdsec:7422
+          crowdsecAppsecFailureBlock: true
+          crowdsecAppsecUnreachableBlock: true
+          crowdsecLapiKey: LAPI_CROWDSEC_BOUNCER_KEY
+          crowdsecLapiHost: crowdsec:8080
+          crowdsecLapiScheme: http
+          crowdsecCapiScenarios:
+            - crowdsecurity/http-path-traversal-probing
+            - crowdsecurity/http-xss-probing
+            - crowdsecurity/http-generic-bf
+          forwardedHeadersTrustedIPs:
+            - 10.0.10.23/32
+            - 10.0.20.0/24
+          clientTrustedIPs:
+            - 192.168.1.0/24
+
+    modsecurity-plugin:
+      plugin:
+        traefik-modsecurity-plugin:
+          BadRequestsThresholdCount: "25"
+          BadRequestsThresholdPeriodSecs: "600"
+          JailEnabled: "false"
+          JailTimeDurationSecs: "600"
+          ModsecurityUrl: "http://modsecurity:80"
+          TimeoutMillis: "2000"
+
+    secured:
+      chain:
+        middlewares:
+        - default-headers

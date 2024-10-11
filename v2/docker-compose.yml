@@ -4,9 +4,14 @@ services:
   traefik:
     image: traefik:v2.9
     ports:
-      - 80:80
-      - 443:443
-      - 9000:9000
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
     logging:
       driver: "json-file"
       options:
@@ -17,9 +22,10 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/log/traefik:/var/log/traefik
       - ./provider:/provider
-      - ./traefik.yml:/etc/traefik/traefik.yml
-    command:
-      - --configFile=/etc/traefik/traefik.yml # Load all configuration from traefik.yml
+      - ./conf/traefik.yaml:/etc/traefik/traefik.yaml:ro  # static traefik configuration
+      - ./conf/dynamic.yaml:/etc/traefik/dynamic.yaml:ro  # dynamic traefik configuration
+    # command:
+    #   - --configFile=/etc/traefik/traefik.yml # Load all configuration from traefik.yml
     deploy:
       # mode: global
       mode: replicated
@@ -33,7 +39,7 @@ services:
         - "traefik.docker.network=traefik-network"
         - "traefik.http.routers.api.service=api@internal"
         - "traefik.http.routers.api.entrypoints=web"
-        - "traefik.http.routers.api.rule=Host(`IP_ADDRESS_SET`)" # <- Change with your IP Address
+        - "traefik.http.routers.api.rule=Host(`127.0.0.1`)" # <- Change with your IP / Domain Name
         - "traefik.http.services.api.loadbalancer.server.port=8080"
         - "traefik.http.routers.api.middlewares=auth-traefik"
         - "traefik.http.middlewares.auth-traefik.basicauth.users=admin:$$2y$$05$$hhTxWvk54ohYF4ElaOcibOeb6qU9IH5vBZrLl73UUqDg3KUAwXWmi" # admin:traefikdash
