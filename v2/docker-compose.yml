@@ -21,11 +21,8 @@ services:
       - traefik-certificates:/certificates
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/log/traefik:/var/log/traefik
-      - ./provider:/provider
       - ./conf/traefik.yaml:/etc/traefik/traefik.yaml:ro  # static traefik configuration
       - ./conf/dynamic.yaml:/etc/traefik/dynamic.yaml:ro  # dynamic traefik configuration
-    # command:
-    #   - --configFile=/etc/traefik/traefik.yml # Load all configuration from traefik.yml
     deploy:
       # mode: global
       mode: replicated
