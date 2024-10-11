@@ -3,6 +3,8 @@ version: "3.3"
 services:
   traefik:
     image: traefik:v2.9
+    environment:
+      - TZ=Asia/jakarta
     ports:
       - target: 80
         published: 80
@@ -21,8 +23,8 @@ services:
       - traefik-certificates:/certificates
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/log/traefik:/var/log/traefik
-      - ./conf/traefik.yaml:/etc/traefik/traefik.yaml:ro  # static traefik configuration
-      - ./conf/dynamic.yaml:/etc/traefik/dynamic.yaml:ro  # dynamic traefik configuration
+      - ./conf/traefik.yaml:/etc/traefik/traefik.yaml:ro # static traefik configuration
+      - ./conf/dynamic.yaml:/etc/traefik/dynamic.yaml:ro # dynamic traefik configuration
     deploy:
       # mode: global
       mode: replicated

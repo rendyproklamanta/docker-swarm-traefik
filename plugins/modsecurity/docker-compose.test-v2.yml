@@ -1,0 +1,21 @@
+version: "3.3"
+
+services:
+  modsecurity-test:
+    image: traefik/whoami
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.lbswarm=true"
+        - "traefik.docker.network=traefik-network"
+        - "traefik.http.routers.modsecurity-test.rule=Host(`127.0.0.1`)" # <- Change with your IP Address
+        - "traefik.http.routers.modsecurity-test.rule=PathPrefix(`/modsecurity`)"
+        - "traefik.http.routers.modsecurity-test.entrypoints=web"
+        - "traefik.http.services.modsecurity-test.loadbalancer.server.port=80"
+        - "traefik.http.routers.modsecurity-test.middlewares=modsecurity-plugin@file"
+    networks:
+      - traefik-network
+
+networks:
+  traefik-network:
+    external: true

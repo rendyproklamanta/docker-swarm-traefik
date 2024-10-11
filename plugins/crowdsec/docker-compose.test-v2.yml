@@ -1,7 +1,6 @@
 version: "3.3"
 
 services:
-  # Uncomment below if you want to test plugin is working properly
   crowdsec-test:
     image: traefik/whoami
     deploy:

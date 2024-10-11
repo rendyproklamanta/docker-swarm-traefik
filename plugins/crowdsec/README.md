@@ -9,27 +9,25 @@ chmod +x init.sh && ./init.sh
 - Enroll first time only : copy Key from crowdsec dashboard console website and insert after enroll xxxx
 
 ```shell
-sudo docker exec $(docker ps -q -f name=crowdsec) cscli console enroll xxxx
+sudo docker exec -it $(docker ps -q -f name=crowdsec) cscli console enroll xxxx
 ```
 
 - Create bouncer key for traefik
 
 ```shell
-sudo docker exec $(docker ps -q -f name=crowdsec) cscli bouncers add traefik-bouncer
+sudo docker exec -it $(docker ps -q -f name=crowdsec) cscli bouncers add traefik-bouncer
 ```
 
 - Copy key and insert to : LAPI_CROWDSEC_BOUNCER__KEY
 
-- Or you can change by using text replacing tool
-
 ```shell
-cd /var/lib/traefik && find -type f -exec sed -i 's/LAPI_CROWDSEC_BOUNCER_KEY/YOUR_GENERATED_BOUNCER_KEY/g' {} +
+nano /var/lib/traefik/v(:num:)/conf/dynamic.yaml
 ```
 
 - Re-deploy after changing LAPI_CROWDSEC_BOUNCER__KEY
   
 ```shell
-cd /var/lib/traefik/v2/plugins/crowdsec
+cd /var/lib/traefik/v(:num:)/plugins/crowdsec
 chmod +x init.sh && ./init.sh
 ```
 
@@ -50,5 +48,10 @@ deploy:
 docker exec -it $(docker ps -q -f name=crowdsec) cscli metrics
 ```
 
+- Test
 
-docker exec -it $(docker ps -q -f name=crowdsec) cscli decisions delete --ip 207.148.72.141
+```shell
+docker exec -it $(docker ps -q -f name=crowdsec) cscli decisions list
+docker exec -it $(docker ps -q -f name=crowdsec) cscli decisions add --ip 192.168.0.100
+docker exec -it $(docker ps -q -f name=crowdsec) cscli decisions delete --ip 192.168.0.100
+```
