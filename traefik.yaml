@@ -2,7 +2,6 @@ api:
   dashboard: true
   insecure: true
 
-
 accessLog:
   filePath: "/var/log/traefik/access.log"  # Path to the Traefik access log file
   fields:
@@ -33,7 +32,7 @@ providers:
     swarmMode: true
     exposedByDefault: false
   file:
-    filename: /etc/traefik/dynamic.yaml
+    directory: /etc/traefik/config
     watch: true
 
 serversTransport:

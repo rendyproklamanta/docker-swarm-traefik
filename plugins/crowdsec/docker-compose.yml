@@ -7,7 +7,6 @@ services:
     environment:
       COLLECTIONS: "crowdsecurity/linux crowdsecurity/traefik crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules"
       CUSTOM_HOSTNAME: crowdsec
-      # BOUNCER_KEY_TRAEFIK: LAPI_CROWDSEC_BOUNCER__KEY
     volumes:
       - ./acquis.yaml:/etc/crowdsec/acquis.yaml:ro
       - ./crowdsec:/etc/crowdsec

@@ -21,25 +21,17 @@ sudo docker exec -it $(docker ps -q -f name=crowdsec) cscli bouncers add traefik
 - Copy key and insert to : LAPI_CROWDSEC_BOUNCER__KEY
 
 ```shell
-nano /var/lib/traefik/v(:num:)/conf/dynamic.yaml
-```
-
-- Re-deploy after changing LAPI_CROWDSEC_BOUNCER__KEY
-  
-```shell
-cd /var/lib/traefik/v(:num:)/plugins/crowdsec
-chmod +x init.sh && ./init.sh
+nano /var/lib/traefik/config/dynamic.yaml
 ```
 
 - How to Use
 
 ```shell
-deploy:
-   labels:
-      - "traefik.enable=true"
-      - "traefik.docker.lbswarm=true"
-      - "traefik.docker.network=traefik-network"
-      - "traefik.http.routers.app-production.middlewares=crowdsec-plugin@file" # <- here to use middleware
+labels:
+   - "traefik.enable=true"
+   - "traefik.docker.lbswarm=true"
+   - "traefik.docker.network=traefik-network"
+   - "traefik.http.routers.app-production.middlewares=crowdsec-plugin@file" # <- here to use middleware
 ```
 
 - Check
