@@ -24,6 +24,14 @@ sudo docker exec -it $(docker ps -q -f name=crowdsec) cscli bouncers add traefik
 nano /var/lib/traefik/config/dynamic.yaml
 ```
 
+- Update crowdsec database daily by cron
+
+```shell
+crontab -e
+
+0 0 * * * docker exec $(docker ps -q -f name=crowdsec) cscli hub update >> /var/log/crowdsec_update.log 2>&1
+```
+
 - How to Use
 
 ```shell
