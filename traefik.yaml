@@ -29,7 +29,7 @@ providers:
     endpoint: "unix:///var/run/docker.sock"
     network: "traefik-network"
     httpClientTimeout: "30m"
-    swarmMode: true
+    # swarmMode: true
     exposedByDefault: false
   file:
     directory: /etc/traefik/config
