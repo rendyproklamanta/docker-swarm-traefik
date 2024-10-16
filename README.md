@@ -4,7 +4,7 @@
 
 ```shell
 mkdir -p /var/lib/traefik
-mkdir -p /var/log/traefik && chown -R 755 /var/log/traefik
+mkdir -p /var/log/traefik && chmod -R 755 /var/log/traefik
 ```
 
 ## Clone this repository
@@ -17,7 +17,7 @@ git clone https://github.com/rendyproklamanta/docker-swarm-traefik.git .
 ## Give permission to dir certificates
 
 ```shell
-chown -R 755 /var/lib/traefik/certificates
+chmod -R 755 /var/lib/traefik/certificates
 ```
 
 ## Change traefik dashboard access by IP or domain
