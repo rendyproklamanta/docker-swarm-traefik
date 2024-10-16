@@ -20,9 +20,9 @@ services:
         max-size: "10m"
         max-file: "1"
     volumes:
+      - traefik-certificates:/certificates
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/log/traefik:/var/log/traefik
-      - ./certificates:/certificates
       - ./traefik.yaml:/etc/traefik/traefik.yaml # static traefik configuration
       - ./config:/etc/traefik/config # dynamic traefik configuration
     deploy:
@@ -45,6 +45,9 @@ services:
     networks:
       - traefik-network
 
+volumes:
+  traefik-certificates: # HTTPS certificates
+  
 networks:
   traefik-network:
     external: true
