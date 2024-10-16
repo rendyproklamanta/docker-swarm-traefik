@@ -14,12 +14,6 @@ cd /var/lib/traefik
 git clone https://github.com/rendyproklamanta/docker-swarm-traefik.git .
 ```
 
-## Give permission to dir certificates
-
-```shell
-chmod -R 755 /var/lib/traefik/certificates
-```
-
 ## Change traefik dashboard access by IP or domain
 
 ```shell

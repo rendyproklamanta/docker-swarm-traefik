@@ -9,13 +9,13 @@ chmod +x init.sh && ./init.sh
 - Enroll first time only : copy Key from crowdsec dashboard console website and insert after enroll xxxx
 
 ```shell
-sudo docker exec -it $(docker ps -q -f name=crowdsec) cscli console enroll xxxx
+sudo docker exec -it $(docker ps -q -f "name=crowdsec") cscli console enroll xxxx
 ```
 
 - Create bouncer key for traefik
 
 ```shell
-sudo docker exec -it $(docker ps -q -f name=crowdsec) cscli bouncers add traefik-bouncer
+sudo docker exec -it $(docker ps -q -f "name=crowdsec") cscli bouncers add traefik-bouncer
 ```
 
 - Copy key and insert to : LAPI_CROWDSEC_BOUNCER__KEY
@@ -29,7 +29,7 @@ nano /var/lib/traefik/config/dynamic.yaml
 ```shell
 crontab -e
 
-0 0 * * * docker exec $(docker ps -q -f name=crowdsec) cscli hub update >> /var/log/crowdsec_update.log 2>&1
+0 0 * * * docker exec $(docker ps -q -f "name=crowdsec") cscli hub update >> /var/log/crowdsec_update.log 2>&1
 ```
 
 - How to Use
@@ -45,13 +45,13 @@ labels:
 - Check
 
 ```shell
-docker exec -it $(docker ps -q -f name=crowdsec) cscli metrics
+docker exec -it $(docker ps -q -f "name=crowdsec") cscli metrics
 ```
 
 - Test
 
 ```shell
-docker exec -it $(docker ps -q -f name=crowdsec) cscli decisions list
-docker exec -it $(docker ps -q -f name=crowdsec) cscli decisions add --ip 192.168.0.100
-docker exec -it $(docker ps -q -f name=crowdsec) cscli decisions delete --ip 192.168.0.100
+docker exec -it $(docker ps -q -f "name=crowdsec") cscli decisions list
+docker exec -it $(docker ps -q -f "name=crowdsec") cscli decisions add --ip 192.168.0.100
+docker exec -it $(docker ps -q -f "name=crowdsec") cscli decisions delete --ip 192.168.0.100
 ```
