@@ -22,7 +22,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/log/traefik:/var/log/traefik
-      - ./certs:/certificates
+      - ./certificates:/certificates
       - ./traefik.yaml:/etc/traefik/traefik.yaml # static traefik configuration
       - ./config:/etc/traefik/config # dynamic traefik configuration
     deploy:
