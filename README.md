@@ -20,7 +20,7 @@ git clone https://github.com/rendyproklamanta/docker-swarm-traefik.git .
 nano docker-compose.v(:num:).yml
 
 ex: 
-nano docker-compose.v2.yml
+nano docker-compose.v3.yml
 ```
 
 ## Create traefik network

@@ -42,7 +42,6 @@ services:
       - "traefik.http.services.api.loadbalancer.server.port=8080"
       - "traefik.http.routers.api.middlewares=auth-traefik"
       - "traefik.http.middlewares.auth-traefik.basicauth.users=admin:$$2y$$05$$hhTxWvk54ohYF4ElaOcibOeb6qU9IH5vBZrLl73UUqDg3KUAwXWmi" # admin:traefikdash
-      - "traefik.http.routers.api.middlewares=crowdsec-plugin@file"
     networks:
       - traefik-network
 
