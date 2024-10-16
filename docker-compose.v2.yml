@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   traefik:
-    image: traefik:v2.9
+    image: traefik:v2
     environment:
       - TZ=Asia/jakarta
     ports:
@@ -20,9 +20,9 @@ services:
         max-size: "10m"
         max-file: "1"
     volumes:
-      - traefik-certificates:/certificates
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/log/traefik:/var/log/traefik
+      - ./certs:/certificates
       - ./traefik.yaml:/etc/traefik/traefik.yaml # static traefik configuration
       - ./config:/etc/traefik/config # dynamic traefik configuration
     deploy:
@@ -44,10 +44,6 @@ services:
         - "traefik.http.middlewares.auth-traefik.basicauth.users=admin:$$2y$$05$$hhTxWvk54ohYF4ElaOcibOeb6qU9IH5vBZrLl73UUqDg3KUAwXWmi" # admin:traefikdash
     networks:
       - traefik-network
-
-volumes:
-  # HTTPS certificates
-  traefik-certificates:
 
 networks:
   traefik-network:

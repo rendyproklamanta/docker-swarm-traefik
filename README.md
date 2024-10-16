@@ -4,7 +4,10 @@
 
 ```shell
 mkdir -p /var/lib/traefik
-mkdir -p /var/log/traefik && chown -R 755 /var/log/traefik
+mkdir -p /var/log/traefik
+
+chown -R 755 /var/log/traefik
+chown -R 755 /var/lib/traefik/certs
 ```
 
 ## Clone this repository
