@@ -4,7 +4,7 @@
 
 ```shell
 docker stack rm traefik-modsecurity
-docker stack deploy -c docker-compose.yml traefik-modsecurity
+docker stack deploy -c docker-compose.yml traefik-modsecurity --detach=false
 ```
 
 - How to Use

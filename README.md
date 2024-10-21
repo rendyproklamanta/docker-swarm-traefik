@@ -35,7 +35,7 @@ docker network create --driver=overlay traefik-network
 docker stack deploy --compose-file docker-compose.v(:num:).yml traefik
 
 ex: 
-docker stack deploy --compose-file docker-compose.v3.yml traefik
+docker stack deploy --compose-file docker-compose.v3.yml traefik --detach=false
 ```
 
 ## Install plugins

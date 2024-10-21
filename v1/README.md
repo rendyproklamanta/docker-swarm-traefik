@@ -20,7 +20,7 @@ git clone https://github.com/rendyproklamanta/docker-swarm-traefik.git .
 
 ```shell
 docker network create --driver=overlay traefik-network
-docker stack deploy --compose-file v1/docker-compose.yml traefik
+docker stack deploy --compose-file v1/docker-compose.yml traefik --detach=false
 ```
 
 - Open consul in browser http://<IP_ADDRESS>:8500
