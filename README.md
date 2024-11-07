@@ -1,5 +1,10 @@
 # How To Use
 
+```sh
+Traefik v3 has bugs :
+- Show bad gateway when docker service update
+```
+
 ## Create traefik dir & log
 
 ```shell
@@ -35,7 +40,7 @@ docker network create --driver=overlay traefik-network
 docker stack deploy --compose-file docker-compose.v(:num:).yml traefik
 
 ex: 
-docker stack deploy --compose-file docker-compose.v3.yml traefik --detach=false
+docker stack deploy --compose-file docker-compose.v2.yml traefik --detach=false
 ```
 
 ## Install plugins
