@@ -16,9 +16,3 @@ filenames:
 labels:
   type: nginx
 ---
-listen_addr: 0.0.0.0:7422
-appsec_config: crowdsecurity/virtual-patching
-name: myAppSecComponent
-source: appsec
-labels:
-  type: appsec

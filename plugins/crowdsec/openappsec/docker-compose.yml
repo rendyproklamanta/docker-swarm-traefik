@@ -1,0 +1,51 @@
+version: "3.3"
+
+services:
+  open-appsec-agent:
+    image: ghcr.io/openappsec/agent:latest
+    ipc: host
+    volumes:
+      - ./openappsec/conf:/etc/cp/conf
+      - ./openappsec/data:/etc/cp/data
+      - ./openappsec/logs:/var/log/nano_agent
+    environment:
+      - CROWDSEC_ENABLED=true
+      - CROWDSEC_MODE=prevent
+      - CROWDSEC_LOGGING=enabled
+      - CROWDSEC_API_URL=http://crowdsec:8080/v1/decisions/stream
+      - CROWDSEC_AUTH_METHOD=apiKey
+      - CROWDSEC_AUTH_DATA=[BOUNCER_KEY]
+    command: /cp-nano-agent --token [OPENAPPSEC_TOKEN]
+    networks:
+      - traefik-network
+
+  crowdsec:
+    image: crowdsecurity/crowdsec:latest
+    container_name: crowdsec
+    ipc: host
+    volumes:
+      - ./crowdsec:/etc/crowdsec
+      - ./crowdsec/data:/var/lib/crowdsec/data
+      - ./crowdsec/logs:/var/log/crowdsec/
+      - /var/log/:/var/log/
+    environment:
+      - COLLECTIONS=openappsec/openappsec
+      - BOUNCER_KEY_openappsec=[BOUNCER_KEY]
+      - DISABLE_PARSERS=crowdsecurity/whitelists
+    networks:
+      - traefik-network
+
+  open-appsec-nginx:
+    image: ghcr.io/openappsec/nginx-attachment:latest
+    container_name: open-appsec-nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d
+    ipc: host
+    ports:
+      - 8081:80
+    networks:
+      - traefik-network
+
+networks:
+  traefik-network:
+    external: true

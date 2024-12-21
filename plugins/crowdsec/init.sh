@@ -10,3 +10,7 @@ mkdir -p /var/log/traefik
 
 docker stack rm traefik-crowdsec
 docker stack deploy -c docker-compose.yml traefik-crowdsec --detach=false
+
+#sleep 10
+#echo "Removing Scenarios..."
+#docker exec -it $(docker ps -q -f "name=crowdsec") cscli scenarios remove crowdsecurity/http-generic-bf --force

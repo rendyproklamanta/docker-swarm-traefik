@@ -5,10 +5,11 @@ services:
     image: crowdsecurity/crowdsec
     hostname: crowdsec
     environment:
-      COLLECTIONS: "crowdsecurity/linux crowdsecurity/traefik crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules"
+      COLLECTIONS: "crowdsecurity/linux crowdsecurity/traefik crowdsecurity/http-cve crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules crowdsecurity/sshd"
       CUSTOM_HOSTNAME: crowdsec
     volumes:
       - ./acquis.yaml:/etc/crowdsec/acquis.yaml:ro
+      - ./appsec.yaml:/etc/crowdsec/acquis.d/appsec.yaml
       - ./crowdsec:/etc/crowdsec
       - ./data:/var/lib/crowdsec/data
       - /var/log/crowdsec:/var/log/crowdsec
@@ -18,6 +19,8 @@ services:
       - /var/log/auth.log:/var/log/auth.log:ro
       - /var/log/ufw.log:/var/log/ufw.log:ro
       - /var/log/syslog:/var/log/syslog:ro
+    # ports:
+    #   - 7422:7422
     networks:
       - traefik-network
 
