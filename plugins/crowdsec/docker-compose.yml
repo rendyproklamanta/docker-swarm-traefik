@@ -4,12 +4,16 @@ services:
   crowdsec:
     image: crowdsecurity/crowdsec
     hostname: crowdsec
+    ipc: host
     environment:
-      COLLECTIONS: "crowdsecurity/linux crowdsecurity/traefik crowdsecurity/http-cve crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules crowdsecurity/sshd"
+      COLLECTIONS: openappsec/openappsec crowdsecurity/nginx crowdsecurity/base-http-scenarios crowdsecurity/linux crowdsecurity/traefik crowdsecurity/http-cve crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules crowdsecurity/sshd
+      BOUNCER_KEY_openappsec: LAPI_CROWDSEC_BOUNCER_KEY
       CUSTOM_HOSTNAME: crowdsec
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
       - ./acquis.yaml:/etc/crowdsec/acquis.yaml:ro
-      - ./appsec.yaml:/etc/crowdsec/acquis.d/appsec.yaml
+      # - ./appsec.yaml:/etc/crowdsec/acquis.d/appsec.yaml
+      - ./openappsec.yaml:/etc/crowdsec/acquis.d/openappsec.yaml
       - ./crowdsec:/etc/crowdsec
       - ./data:/var/lib/crowdsec/data
       - /var/log/crowdsec:/var/log/crowdsec

@@ -1,15 +1,8 @@
 #!/bin/bash
 
-# Create directories crowdsec
-mkdir -p ./crowdsec
-mkdir -p ./crowdsec/data
-mkdir -p ./crowdsec/logs
-chown -R 755 ./crowdsec
-
 # Create directories openappsec
-mkdir -p ./openappsec/conf
-mkdir -p ./openappsec/data
-mkdir -p ./openappsec/logs
-chown -R 755 ./openappsec
+mkdir -p conf && chown -R 755 conf
+mkdir -p data && chown -R 755 data
+mkdir -p logs && chown -R 755 logs
 
-docker stack deploy -c docker-compose.yml crowdsec-openappsec --detach=false
+docker stack deploy -c docker-compose.yml openappsec-agent --detach=false

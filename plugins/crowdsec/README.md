@@ -18,10 +18,25 @@ sudo docker exec -it $(docker ps -q -f "name=crowdsec") cscli console enroll xxx
 sudo docker exec -it $(docker ps -q -f "name=crowdsec") cscli bouncers add traefik-bouncer
 ```
 
-- Copy key and insert to : LAPI_CROWDSEC_BOUNCER__KEY
+- Copy key and insert to LAPI_CROWDSEC_BOUNCER_KEY using replacing tool
 
 ```shell
-nano /var/lib/traefik/config/dynamic.yaml
+cd /var/lib/traefik
+find -type f -exec sed -i 's/LAPI_CROWDSEC_BOUNCER_KEY/YOUR_KEY_HERE/g' {} +
+```
+
+- Deploy open-appsec
+
+```sh
+cd openappsec
+nano docker-compose.yml -> change OPENAPPSEC_TOKEN
+```
+
+- Restart
+
+```sh
+cd /var/lib/traefik/plugins/crowdsec
+./init.sh
 ```
 
 - Update crowdsec database daily by cron
@@ -54,15 +69,4 @@ docker exec -it $(docker ps -q -f "name=crowdsec") cscli metrics
 docker exec -it $(docker ps -q -f "name=crowdsec") cscli decisions list
 docker exec -it $(docker ps -q -f "name=crowdsec") cscli decisions add --ip 192.168.0.100
 docker exec -it $(docker ps -q -f "name=crowdsec") cscli decisions delete --ip 192.168.0.100
-```
-
--- Check appsec
-
-```sh
-nc -zv 127.0.0.1 7422
-docker exec -it $(docker ps -q -f "name=crowdsec") cscli metrics show appsec
-curl -I "https://onevisionclub.com/?id=1%27%20OR%20%271%27=%271%22"
-
-curl -I -X POST localhost:7422/ -i -H 'x-crowdsec-appsec-api-key: akfGsUxouXci+KyWt1DIc7pesg7O2TuYjatpCuQNkgk' -H 'x-crowdsec-appsec-ip: 149.28.133.80' -H 'x-crowdsec-appsec-uri: /test' -H 'x-crowdsec-appsec-host: onevisionclub.com' -H 'x-crowdsec-appsec-verb: GET'
-
 ```
