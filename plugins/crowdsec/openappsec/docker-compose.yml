@@ -3,7 +3,6 @@ version: "3.3"
 services:
   openappsec-agent:
     image: ghcr.io/openappsec/agent:latest
-    ipc: host
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./conf:/etc/cp/conf

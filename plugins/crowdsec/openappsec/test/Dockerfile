@@ -26,4 +26,4 @@ RUN cp /var/www/html/attachment/build_out/nginx_attachment/lib/libngx_module.so 
 RUN sed -i '1s|^|load_module /usr/lib/nginx/modules/libngx_module.so;\n|' /etc/nginx/nginx.conf
 
 # RUN
-CMD /usr/local/sbin/php-fpm -F & nginx -g 'daemon off;'
+CMD ["/bin/bash", "-c", "/usr/local/sbin/php-fpm -F & nginx -g 'daemon off;'"]

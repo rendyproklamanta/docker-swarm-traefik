@@ -22,10 +22,10 @@ sudo docker exec -it $(docker ps -q -f "name=crowdsec") cscli bouncers add traef
 
 ```shell
 cd /var/lib/traefik
-find -type f -exec sed -i 's/LAPI_CROWDSEC_BOUNCER_KEY/YOUR_KEY_HERE/g' {} +
+find . -type f -exec sed -i "s|LAPI_CROWDSEC_BOUNCER_KEY|YOUR_KEY_HERE|g" {} +
 ```
 
-- Deploy open-appsec
+- Deploy open-appsec (SKIP -- not work in docker swarm)
 
 ```sh
 cd openappsec
