@@ -1,5 +1,0 @@
-source: docker
-container_name:
-  - openappsec-agent
-labels:
-  type: openappsec

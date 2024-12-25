@@ -12,9 +12,6 @@ echo "Deploying crowdsec..."
 docker stack rm crowdsec
 docker stack deploy -c docker-compose.yml crowdsec --detach=false
 
-# echo "Deploying open-appsec..."
-# cd openappsec && chmod +x init.sh && ./init.sh
-
 echo "Removing Scenarios...(30 secs)"
 sleep 30
 docker exec -it $(docker ps -q -f "name=crowdsec") cscli scenarios remove crowdsecurity/http-generic-bf --force

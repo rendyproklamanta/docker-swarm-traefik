@@ -25,13 +25,6 @@ cd /var/lib/traefik
 find . -type f -exec sed -i "s|LAPI_CROWDSEC_BOUNCER_KEY|YOUR_KEY_HERE|g" {} +
 ```
 
-- Deploy open-appsec (SKIP -- not work in docker swarm)
-
-```sh
-cd openappsec
-nano docker-compose.yml -> change OPENAPPSEC_TOKEN
-```
-
 - Restart
 
 ```sh
