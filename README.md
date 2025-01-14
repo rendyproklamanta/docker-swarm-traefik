@@ -16,7 +16,7 @@ sudo mkdir -p /var/log/traefik && sudo chmod -R 755 /var/log/traefik
 
 ```shell
 cd /var/lib/traefik
-git clone https://github.com/rendyproklamanta/docker-swarm-traefik.git .
+sudo git clone https://github.com/rendyproklamanta/docker-swarm-traefik.git .
 ```
 
 ## Change traefik dashboard access by IP or domain
