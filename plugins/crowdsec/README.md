@@ -22,14 +22,14 @@ sudo docker exec -it $(docker ps -q -f "name=crowdsec") cscli bouncers add traef
 
 ```shell
 cd /var/lib/traefik
-find . -type f -exec sed -i "s|LAPI_CROWDSEC_BOUNCER_KEY|YOUR_KEY_HERE|g" {} +
+sudo find . -type f -exec sed -i "s|LAPI_CROWDSEC_BOUNCER_KEY|YOUR_KEY_HERE|g" {} +
 ```
 
 - Restart
 
 ```sh
 cd /var/lib/traefik/plugins/crowdsec
-./init.sh
+sudo ./init.sh
 ```
 
 - Update crowdsec database daily by cron
@@ -53,13 +53,13 @@ labels:
 - Check
 
 ```shell
-docker exec -it $(docker ps -q -f "name=crowdsec") cscli metrics
+sudo docker exec -it $(docker ps -q -f "name=crowdsec") cscli metrics
 ```
 
 - Test
 
 ```shell
-docker exec -it $(docker ps -q -f "name=crowdsec") cscli decisions list
-docker exec -it $(docker ps -q -f "name=crowdsec") cscli decisions add --ip 192.168.0.100
-docker exec -it $(docker ps -q -f "name=crowdsec") cscli decisions delete --ip 192.168.0.100
+sudo docker exec -it $(docker ps -q -f "name=crowdsec") cscli decisions list
+sudo docker exec -it $(docker ps -q -f "name=crowdsec") cscli decisions add --ip 192.168.0.100
+sudo docker exec -it $(docker ps -q -f "name=crowdsec") cscli decisions delete --ip 192.168.0.100
 ```

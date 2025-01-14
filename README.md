@@ -8,8 +8,8 @@ Traefik v3 has bugs :
 ## Create traefik dir & log
 
 ```shell
-mkdir -p /var/lib/traefik
-mkdir -p /var/log/traefik && chmod -R 755 /var/log/traefik
+sudo mkdir -p /var/lib/traefik
+sudo mkdir -p /var/log/traefik && sudo chmod -R 755 /var/log/traefik
 ```
 
 ## Clone this repository
@@ -25,13 +25,13 @@ git clone https://github.com/rendyproklamanta/docker-swarm-traefik.git .
 nano docker-compose.v(:num:).yml
 
 ex: 
-nano docker-compose.v2.yml
+sudo nano docker-compose.v2.yml
 ```
 
 ## Create traefik network
 
 ```shell
-docker network create --driver=overlay traefik-network
+sudo docker network create --driver=overlay traefik-network
 ```
 
 ## Deploy traefik.yml first before deploy your app
@@ -40,7 +40,7 @@ docker network create --driver=overlay traefik-network
 docker stack deploy --compose-file docker-compose.v(:num:).yml traefik
 
 ex: 
-docker stack deploy --compose-file docker-compose.v2.yml traefik --detach=false
+sudo docker stack deploy --compose-file docker-compose.v2.yml traefik --detach=false
 ```
 
 ## Install plugins
