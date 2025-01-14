@@ -20,7 +20,7 @@ entryPoints:
 certificatesResolvers:
   le:
     acme:
-      email: "myemail@domain.com"
+      #email: "myemail@domain.com"
       storage: "/certificates/acme.json"
       tlsChallenge: {}
 
