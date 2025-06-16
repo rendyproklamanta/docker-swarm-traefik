@@ -23,8 +23,9 @@ sudo git clone https://github.com/rendyproklamanta/docker-swarm-traefik.git .
 
 ```shell
 nano docker-compose.v(:num:).yml
+```
 
-ex: 
+```shell
 sudo nano docker-compose.v2.yml
 ```
 
@@ -38,8 +39,9 @@ sudo docker network create --driver=overlay traefik-network
 
 ```shell
 docker stack deploy --compose-file docker-compose.v(:num:).yml traefik
+```
 
-ex: 
+```shell
 sudo docker stack deploy --compose-file docker-compose.v2.yml traefik --detach=false
 ```
 
