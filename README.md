@@ -56,6 +56,35 @@ cd plugins
 - modsecurity
 - crowdsec
 
+## Use your own SSL cert
+
+- Rename certs/domain1 to real yourdomain
+- Insert your crt and key to the directory
+- Then edit in config/tls.yaml
+- Deploy traefik, 
+- Edit you deployment.yml
+
+```sh
+labels:
+  - "traefik.enable=true"
+  - "traefik.http.routers.service-name.tls=true" <-- use this instead certresolver or remove certresolver
+```
+### If your website still serve Let's Encrypt as SSL
+
+- Delete acme.json by 
+
+```sh
+docker ps
+docker exec -it <traefik_container_id> sh
+rm -rf /certificates/acme.json
+```
+
+- Redeploy traefik
+
+
 ### Notes
 
 - in v2 and v3 to share certificates across all nodes need traefik enterprise edition (paid version)
+
+
+

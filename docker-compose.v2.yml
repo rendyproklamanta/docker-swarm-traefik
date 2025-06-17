@@ -25,6 +25,7 @@ services:
       - /var/log/traefik:/var/log/traefik
       - ./traefik.yaml:/etc/traefik/traefik.yaml # static traefik configuration
       - ./config:/etc/traefik/config # dynamic traefik configuration
+      - ./certs:/certs:ro
     deploy:
       # mode: global
       mode: replicated
