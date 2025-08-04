@@ -15,6 +15,9 @@ http:
         accessControlMaxAge: 100
         addVaryheader: true
         referrerPolicy: "origin-when-cross-origin"
+        accessControlAllowOriginList: "*"
+        accessControlAllowMethods: "*"
+        accessControlAllowHeaders: "*"
         customFrameOptionsValue: "SAMEORIGIN"
         customResponseHeaders:
           # prevent some applications to expose too much information by removing thise headers:
